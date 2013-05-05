@@ -18,19 +18,19 @@ public class PageTest extends AbstractVmTest {
 
     @Test
     public void pageTest() throws Exception {
-		XmlDiff diff = runTest("page");
+		XmlDiff diff = runTest("pageTest/page");
 		assertTrue(diff.result() + " VM output: " + diff.getTestedXml(), diff.passed());
     }
 
 	@Test
 	public void pageWithHeadAndBodyTest() throws Exception {
-		XmlDiff diff = runTest("pageWithHeadAndBody");
+		XmlDiff diff = runTest("pageTest/headAndBody");
 		assertTrue(diff.result() + " VM output: " + diff.getTestedXml(), diff.passed());
 	}
 
 	@Test
 	public void pageMultipartActionTest() throws Exception {
-		XmlDiff diff = runTest("pageMultipartAction");
+		XmlDiff diff = runTest("pageTest/pageMultipartAction");
 		assertTrue(diff.result() + " VM output: " + diff.getTestedXml(), diff.passed());
 	}
 }
