@@ -1,0 +1,8 @@
+#macro( pageStart )
+	<!DOCTYPE html>
+	<html>
+#end
+
+#macro( pageEnd )
+	</html>
+#end
