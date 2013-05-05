@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>My Scripted Page</title>
+		<script src = "initScript.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			start();
+		</script>
+
+	</head>
+	<body>
+		<form
+				action = ""
+				method = "post">
+			before script
+			<script src = "bodyScript.js" type="text/javascript"></script>
+			<script type="text/javascript" >
+				runInsideTheBody();
+			</script>
+			after script
+		</form>
+		<script src = "http://www.domain.com:123/js/testScript.js?v=4&amp;amp;lang=cz" type = "text/javascript" ></script>
+		<script src = "anotherScript.js" type = "text/javascript" id = "script2"></script>
+	</body>
+</html>
