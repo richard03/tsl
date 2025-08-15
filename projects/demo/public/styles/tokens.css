@@ -1,0 +1,10 @@
+/*
+ * Barvy a písmo prototypu.
+ *
+ * Engine má vlastní neutrální výchozí hodnoty, aby fungoval i bez tohoto souboru; co je tady, je
+ * přebije. Zatím si demo vystačí s výchozími — až budeš chtít vlastní paletu, přepiš je tady:
+ *
+ *   :root {
+ *     --accent: #007bff;
+ *   }
+ */

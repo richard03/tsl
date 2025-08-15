@@ -1,0 +1,48 @@
+# 6. zastávka: zápis do dat a podmíněné zobrazení.
+#
+# `setData` v akci tlačítka uloží hodnotu do relace, `$visibleIf` a `$disabledIf` se pak na tu
+# hodnotu odkazují přes `data.*`. Je to stejný zápis podmínek jako ve `flow.yaml`.
+id: 06-settings
+title: Nastavení
+structure:
+  header:
+    - ScreenHeader settings-header
+  content:
+    - Text settings-heading
+    - SelectField settings-channel
+    - Text settings-hint
+    - Button settings-confirm
+    - Text settings-done
+  footer:
+    - Button settings-back
+attributes:
+  settings-heading:
+    size: heading
+  settings-channel:
+    field: channel
+    options:
+      - { value: email, label: E-mailem }
+      - { value: sms, label: SMS zprávou }
+  # Nápověda zmizí, jakmile je vybráno.
+  settings-hint:
+    $visibleIf:
+      field: data.channel
+      truthy: false
+    size: muted
+  settings-confirm:
+    # Dokud si uživatel nevybere kanál, potvrzení nedává smysl.
+    $disabledIf:
+      field: data.channel
+      truthy: false
+    action:
+      setData:
+        settingsSaved: true
+  settings-done:
+    $visibleIf:
+      field: data.settingsSaved
+      truthy: true
+    size: muted
+  settings-back:
+    type: secondary
+    action:
+      back: true

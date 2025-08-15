@@ -1,0 +1,27 @@
+id: 02-form
+title: Demo - přihlášení
+structure:
+  header:
+    - ScreenHeader screenHeader1
+  content:
+    - InputField email
+    - InputField password
+  footer:
+    - Button submit
+attributes:
+  screenHeader1:
+    showBackButton: true
+  email:
+    field: email
+    inputType: email
+    validators:
+      - type: mandatory
+      - type: email
+  password:
+    field: password
+    inputType: password
+    validators:
+      - type: mandatory
+  submit:
+    action:
+      next: true

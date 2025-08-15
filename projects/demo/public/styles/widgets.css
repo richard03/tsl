@@ -1,0 +1,5 @@
+/*
+ * Vzhled doménových widgetů z public/widgets/.
+ *
+ * Načítá se po components.css, takže smí přebíjet vzhled komponent, ze kterých je widget složený.
+ */

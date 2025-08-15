@@ -1,0 +1,51 @@
+# 3. zastávka: vnořování prvků a rozcestník.
+#
+# `Tile` má ve své šabloně <slot>, takže do sebe pustí potomky — ve struktuře se zanoření zapisuje
+# odsazeným seznamem za dvojtečkou. Dlaždice je zároveň klikatelná: `action` z ní udělá rozcestník.
+#
+# Pozdrav se váže na jméno respondenta přes `$bind`; hodnotu zadal moderátor před testem.
+id: 03-dashboard
+title: Přehled
+structure:
+  header:
+    - ScreenHeader dash-header
+  content:
+    - Text dash-greeting
+    - Tile dash-products-tile:
+        - Text dash-products-title
+        - Text dash-products-note
+    - Tile dash-transactions-tile:
+        - Text dash-transactions-title
+        - Text dash-transactions-note
+    - Divider
+    - Tile dash-settings-tile:
+        - Text dash-settings-title
+attributes:
+  dash-header:
+    showBackButton: false
+  dash-greeting:
+    size: heading
+    text: "Dobrý den, {{respondent.name}}"
+  dash-products-title:
+    size: subheading
+  dash-products-tile:
+    $visibleIf:
+      field: respondent.products
+      some:
+        - { field: active, notEquals: false }
+    action:
+      goto: 04-products
+  dash-transactions-title:
+    size: subheading
+  # Dlaždice se ukáže jen tehdy, když to moderátor u respondenta zapnul.
+  dash-transactions-tile:
+    $visibleIf:
+      field: respondent.showTransactions
+      truthy: true
+    action:
+      goto: 05-transactions
+  dash-settings-title:
+    size: subheading
+  dash-settings-tile:
+    action:
+      goto: 06-settings

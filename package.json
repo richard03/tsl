@@ -1,0 +1,37 @@
+{
+  "name": "tsl",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite projects/demo",
+    "build": "tsc -b projects/demo && vite build projects/demo",
+    "preview": "vite preview projects/demo",
+    "lint": "oxlint",
+    "check:components": "node scripts/check-html-components.cjs",
+    "check:docs": "node scripts/check-docs.cjs",
+    "check:demo": "node projects/demo/scripts/check-flow.cjs",
+    "dev:konsolidace": "vite projects/demo",
+    "dev:demo": "vite projects/demo",
+    "build:demo": "tsc -b projects/demo && vite build projects/demo",
+    "build:demo": "tsc -b projects/demo && vite build projects/demo",
+    "preview:konsolidace": "vite preview projects/demo",
+    "check:interactions": "node projects/demo/scripts/check-interactions.cjs"
+  },
+  "dependencies": {
+    "js-yaml": "^5.2.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.71.0",
+    "playwright": "^1.61.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  }
+}

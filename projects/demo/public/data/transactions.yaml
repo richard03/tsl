@@ -1,0 +1,24 @@
+# Ukázková data pro widget TransactionList.
+#
+# Datové soubory jsou pro tabulky a číselníky, na které se odkazuje logika — na rozdíl od
+# `business.js`, kam patří pravidla. Widget si soubor načte za běhu přes `lib.loadDataFile`,
+# takže jeho úprava nevyžaduje build.
+transactions:
+  - date: 2026-03-14
+    description: Nákup potravin
+    amount: -842
+  - date: 2026-03-12
+    description: Mzda
+    amount: 48500
+  - date: 2026-03-11
+    description: Předplatné hudby
+    amount: -199
+  - date: 2026-03-08
+    description: Restaurace
+    amount: -1250
+  - date: 2026-03-05
+    description: Převod na spoření
+    amount: -5000
+  - date: 2026-03-01
+    description: Nájem
+    amount: -18000

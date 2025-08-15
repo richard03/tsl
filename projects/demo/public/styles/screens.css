@@ -1,0 +1,5 @@
+/*
+ * Vzhled, který nepatří žádné komponentě ani widgetu — rozvržení konkrétních obrazovek.
+ *
+ * Načítá se jako poslední, takže má z projektových stylů poslední slovo.
+ */

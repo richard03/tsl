@@ -1,0 +1,41 @@
+<template>
+  <button
+    type="button"
+    class="co-button co-button--{{type}}"
+    :disabled="disabled"
+    data-on-click="click"
+  >
+    {{label}}
+  </button>
+</template>
+
+<style>
+  .co-button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+
+  .co-button--primary {
+      background-color: #007bff;
+      color: white;
+  }
+
+  .co-button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+  }
+</style>
+
+<script>
+  export default {
+    // `action` říká enginu, ať tlačítku předá `onClick` sestavené z `action:` v obrazovce.
+    action: true,
+    // `gated` k tomu přidá `disabled`, dokud má obrazovka nevyplněná nebo chybná pole.
+    gated: true,
+
+    defaults: { label: "", type: "primary" },
+
+    on: { click: ({ props }) => props.onClick?.() },
+  };
+</script>

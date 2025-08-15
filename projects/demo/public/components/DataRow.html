@@ -1,0 +1,42 @@
+<template>
+  <div class="co-data-row">
+    <span class="co-data-row__label">{{label}}</span>
+    <span class="co-data-row__value co-data-row__value--{{tone}}">{{value}}</span>
+  </div>
+</template>
+
+<style>
+  .co-data-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .co-data-row__label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .co-data-row__value {
+    flex-shrink: 0;
+    font-weight: 600;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .co-data-row__value--positive {
+    color: #1e7b1d;
+  }
+
+  .co-data-row__value--negative {
+    color: #b30020;
+  }
+</style>
+
+<script>
+  export default {
+    // Zobrazovací komponenta: žádný příznak nepotřebuje, jen dostane vlastnosti a vykreslí je.
+    // `tone` obarví hodnotu (`positive` / `negative`); bez něj zůstane v barvě textu.
+    defaults: { label: "", value: "", tone: "neutral" },
+  };
+</script>

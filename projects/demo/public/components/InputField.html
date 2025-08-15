@@ -1,0 +1,68 @@
+<template>
+  <label class="co-field">
+    <span class="co-field__label">{{label}}</span>
+    <input
+      class="co-field__input{{showError ? ' co-field__input--error' : ''}}"
+      :type="inputType"
+      :placeholder="placeholder"
+      :value="value ?? ''"
+      data-on-change="change"
+      data-on-blur="blur"
+    />
+    <span data-if="showError" class="co-field__error">{{errorMessage}}</span>
+  </label>
+</template>
+
+<style>
+  .co-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+  }
+
+  .co-field__label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+  }
+
+  .co-field__input {
+      font: inherit;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+  }
+
+  .co-field__input--error {
+      border-color: #d1435b;
+  }
+
+  .co-field__error {
+      font-size: 12px;
+      color: #d1435b;
+  }
+</style>
+
+<script>
+  export default {
+    // `field` říká enginu, ať komponentě předá `value` a `onChange` navázané na `field` z obrazovky.
+    field: true,
+    // `validatable` k tomu přidá `forceShowError`, kterým zablokované odeslání odhalí chyby.
+    validatable: true,
+
+    defaults: { label: "", inputType: "text", placeholder: "" },
+
+    // Chybu ukážeme až když uživatel z pole odejde — ne hned při psaní prvního písmene.
+    state: { touched: false },
+
+    compute: ({ props, state, lib }) => {
+      const errorMessage = lib.getValidationError(String(props.value ?? ""), props.validators);
+      return { errorMessage, showError: Boolean(errorMessage) && (state.touched || props.forceShowError) };
+    },
+
+    on: {
+      change: ({ props }, event) => props.onChange?.(event.target.value),
+      blur: ({ setState }) => setState({ touched: true }),
+    },
+  };
+</script>

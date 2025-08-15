@@ -1,0 +1,16 @@
+id: 03-welcome
+title: Demo - přihlášeno
+structure:
+  content:
+    - Tile tile1:
+      - Text tile1Heading
+      - Text tile1Hote
+  footer:
+    - Button introButton
+attributes:
+  tile1Heading:
+    size: heading
+  introButton:
+    type: secondary
+    action:
+      goto: 01-intro

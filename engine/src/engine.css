@@ -1,0 +1,704 @@
+/*
+ * Vzhled, který si engine přináší s sebou.
+ *
+ * Obsahuje jen to, co vykresluje sám engine: rám telefonu a rozvržení obrazovky (AppShell,
+ * ScreenRenderer), moderátorský formulář a panel, a formulářové prvky, ze kterých je moderátorský
+ * formulář poskládaný. Díky tomu vypadá nový prototyp rozumně od první obrazovky, aniž by musel
+ * cokoli kopírovat.
+ *
+ * Vzhled vlastních komponent prototypu sem NEPATŘÍ — ten žije v jeho `public/styles/`.
+ *
+ * Vše je uvnitř kaskádové vrstvy `prototyper`. Nezařazená pravidla mají v CSS vždy přednost před
+ * zařazenými, takže projekt cokoli odsud přebije prostě tím, že si to nastaví po svém — nezávisle
+ * na tom, v jakém pořadí se stylopisy načtou.
+ */
+@layer prototyper {
+  /*
+   * Neutrální výchozí hodnoty, aby engine vypadal rozumně i v prototypu, který si žádné tokeny
+   * nenastavil. Barvy konkrétního zadavatele sem NEPATŘÍ — ty si prototyp definuje ve svém
+   * `public/styles/tokens.css`, které tuhle vrstvu přebije.
+   */
+  :root {
+    --text: #2c2a33;
+    --text-muted: #6b6375;
+    --bg: #f3f2f6;
+    --surface: #ffffff;
+    --border: #e0dee5;
+    --control-border: #757575;
+    --accent: #3f6fd8;
+    --accent-contrast: #ffffff;
+    --info: #0099cc;
+    --info-soft: #e0f3f9;
+    --danger: #d1435b;
+    --success: #2baf29;
+
+    color-scheme: light;
+    font: 16px/1.45 system-ui, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  #root {
+    /* dvh (ne svh/vh), aby se to zmenšilo při vyjetí klávesnice a obsah — třeba tlačítko
+       pokračovat v patičce — nezůstal schovaný pod ní. */
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 12px;
+  }
+
+  .app {
+    position: relative;
+    width: 375px;
+  }
+
+  .phone {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    /* Pevná výška (ne min-height), aby přetékající obsah roloval uvnitř .screen a nenatahoval
+       .phone nad výšku okna — jinak roluje celá stránka a odroluje i to, co je připnuté dole ve
+       flex sloupci (třeba patička nebo LegacyMenuBar). */
+    height: 812px;
+    width: 375px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Na velkých obrazovkách zmenšíme celý telefon (přes --phone-scale dopočítané v JS, viz App.tsx),
+     pokud by se jeho nativní rozměr 375x812 do okna celý nevešel — .app dostane výsledný menší
+     layoutový box, .phone si nechá nativní velikost a vizuálně se na ten box zmenší. Nic uvnitř se
+     tak nemusí přestylovat a stránka nikdy nemusí rolovat, aby byl vidět celý přístroj. */
+  @media (min-width: 601px) {
+    .app {
+      width: calc(375px * var(--phone-scale, 1));
+      height: calc(812px * var(--phone-scale, 1));
+    }
+    .phone {
+      transform: scale(var(--phone-scale, 1));
+      transform-origin: top left;
+    }
+    /* Skutečný telefon nemá kurzor myši, takže ani nenapovídá jeho tvarem (pointer vs. text vs.
+       not-allowed) — všude vynutíme stejnou "ruku", aby se to na desktopu neprozradilo.
+       !important proto, že spousta komponent si nastavuje vlastní kurzor se stejnou nebo vyšší
+       specificitou (třeba `button:disabled`) a nad prostým pravidlem `.phone *` by vyhrála. */
+    .phone,
+    .phone * {
+      cursor: pointer !important;
+    }
+  }
+
+  /* Na skutečném telefonu rámeček jen zabírá místo — jdeme od kraje ke kraji místo simulace přístroje. */
+  @media (max-width: 600px) {
+    #root {
+      padding: 0;
+    }
+    .app {
+      width: 100%;
+    }
+    .phone {
+      width: 100%;
+      height: 100dvh;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .screen-id-tag {
+      display: none;
+    }
+  }
+
+  /*
+   * Hlavička a patička drží svoje místo nahoře a dole a obsah roluje mezi nimi.
+   *
+   * Jsou pozicované absolutně vůči rámu, ne součástí toku — díky tomu je jedno, kolik obsahu
+   * obrazovka má. Aby pod nimi nic nezapadlo, dostane rolovací plocha odsazení o jejich skutečnou
+   * výšku; tu měří ScreenRenderer a zapisuje do proměnných níž (napevno napsat nejde, hlavička
+   * někdy chybí a patička má jednou jedno tlačítko, jindy tři).
+   */
+  .screen-frame {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    --screen-header-height: 0px;
+    --screen-footer-height: 0px;
+  }
+
+  .screen__header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background: var(--surface);
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    padding: var(--screen-header-height) 16px calc(var(--screen-footer-height) + 16px) 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .screen__body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .screen__body--center {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .screen__footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface);
+  }
+
+  .screen-id-tag {
+    /* Pozicované absolutně vůči .app (ne jako sourozenec .phone v běžném toku) — `transform: scale()`
+       na .phone neovlivňuje layout sourozenců, takže popisek v běžném toku by seděl na *nezmenšené*
+       výšce .phone místo hned pod vizuálně zmenšeným telefonem. */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 8px;
+    text-align: center;
+    font-size: 11px;
+    font-family: ui-monospace, Consolas, monospace;
+    color: var(--text-muted);
+    opacity: 0.6;
+    user-select: text;
+  }
+
+  .heading--1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .heading--2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .heading--3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .title-text {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .title-text--headlineSmall {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .title-text--titleLarge {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .title-text--titleSmall {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .paragraph {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  .paragraph--muted {
+    color: var(--text-muted);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field--radio {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .field__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .field__input {
+    font: inherit;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .field-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .field-check__input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    border: 2px solid var(--control-border);
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .field-check__input--checkbox {
+    border-radius: 2px;
+  }
+
+  .field-check__input--radio {
+    border-radius: 999px;
+  }
+
+  .field-check__input--checkbox:checked::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10' fill='none'%3E%3Cpath d='M1 5L4.5 8.5L11 1' stroke='%232c2a33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px 10px;
+  }
+
+  .field-check__input--radio:checked::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 999px;
+    background: var(--text);
+  }
+
+  .field-check__label {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+
+  .alert-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .alert-message__icon {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .alert-message__text {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: inherit;
+  }
+
+  .alert-message--info {
+    background: #e0f3f9;
+    box-shadow: inset 0 0 0 1px #0099cc;
+    color: #006b8f;
+  }
+
+  .alert-message--success {
+    background: #e6f5e5;
+    box-shadow: inset 0 0 0 1px #2baf29;
+    color: #1e7b1d;
+  }
+
+  .alert-message--warning {
+    background: #ffece0;
+    box-shadow: inset 0 0 0 1px #ff6000;
+    color: #b34300;
+  }
+
+  .alert-message--error {
+    background: #ffe0e6;
+    box-shadow: inset 0 0 0 1px #ff002e;
+    color: #b30020;
+  }
+
+  .data-row-value {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .data-row-value__label {
+    flex: 1;
+    min-width: 0;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+
+  .data-row-value__value {
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: var(--text);
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .select-box-field,
+  .text-input-field {
+    position: relative;
+    display: block;
+  }
+
+  .select-box-field__box,
+  .text-input-field__box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: #eaeaea;
+  }
+
+  .select-box-field__text,
+  .text-input-field__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .select-box-field__placeholder {
+    font-size: 16px;
+    line-height: 24px;
+    color: #525252;
+  }
+
+  .select-box-field__caption,
+  .text-input-field__caption {
+    font-size: 12px;
+    line-height: 16px;
+    color: #525252;
+  }
+
+  .select-box-field__value {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: var(--text);
+  }
+
+  .select-box-field__caret {
+    flex-shrink: 0;
+    display: flex;
+    color: var(--text);
+  }
+
+  .select-box-field__select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    border: none;
+    cursor: pointer;
+  }
+
+  .text-input-field__input {
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  .text-input-field__input::placeholder {
+    color: #525252;
+    font-weight: 400;
+  }
+
+  .text-input-field__input:focus {
+    outline: none;
+  }
+
+  .text-input-field--filled .text-input-field__input {
+    font-weight: 600;
+  }
+
+  .text-input-field__suffix {
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: var(--text);
+  }
+
+  .select-box-field__box--error,
+  .text-input-field__box--error {
+    box-shadow: inset 0 0 0 2px #b30020;
+  }
+
+  .select-box-field__error,
+  .text-input-field__error {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #b30020;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+    width: 100%;
+  }
+
+  .button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .button--primary {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+
+  .button--primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .button--secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .button--danger {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .moderator-setup {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px 20px 32px;
+  }
+
+  .moderator-setup h1 {
+    margin: 0 0 16px;
+  }
+
+  .moderator-setup form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .product-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .product-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .product-summary-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 0;
+  }
+
+  .product-summary-item__meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .product-summary-item__remove {
+    margin-left: auto;
+    border: none;
+    background: none;
+    color: var(--danger);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(33, 33, 33, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+
+  .modal-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-card__form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .modal-card__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .moderator-toggle {
+    position: fixed;
+    bottom: 16px;
+    right: max(16px, calc(50% - 215px + 16px));
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.55;
+  }
+
+  .moderator-toggle:hover {
+    opacity: 1;
+  }
+
+  .moderator-panel {
+    position: fixed;
+    bottom: 64px;
+    right: max(16px, calc(50% - 215px + 16px));
+    width: 260px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+
+  .moderator-panel__respondent {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+
+  /* Na skutečném telefonu jde rámeček od kraje ke kraji, takže desktopová pozice vpravo dole (laděná
+     kolem vycentrovaného rámečku širokého 375px) už neplatí — přišpendlíme přepínač a panel místo toho
+     vpravo nahoru k okraji okna. */
+  @media (max-width: 600px) {
+    .moderator-toggle {
+      top: 16px;
+      right: 16px;
+      bottom: auto;
+    }
+    .moderator-panel {
+      top: 64px;
+      right: 16px;
+      bottom: auto;
+    }
+  }
+}

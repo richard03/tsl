@@ -1,0 +1,31 @@
+# Podoba URL jednotlivých obrazovek:
+#   query = …/demo/?screen=01-intro   (funguje na jakémkoli hostingu, nic se nenastavuje)
+#   path  = …/demo/01-intro           (hezčí, ale server musí mít funkční RewriteRule z .htaccess)
+routing: path
+
+start: 01-intro
+nodes:
+  - screenId: 01-intro
+    next: 02-login
+
+  # Přihlášení vede vždy na rozcestník.
+  - screenId: 02-login
+    next: 03-dashboard
+
+  - screenId: 03-dashboard
+    next: 04-products
+
+  # Větvení: pravidla se zkoušejí shora dolů, `default: true` je výchozí větev. Historii transakcí
+  # zapíná moderátor u respondenta, takže komu ji nezapnul, tomu se obrazovka přeskočí.
+  - screenId: 04-products
+    next:
+      - when:
+          - { field: respondent.showTransactions, truthy: true }
+        goto: 05-transactions
+      - default: true
+        goto: 06-settings
+
+  - screenId: 05-transactions
+    next: 06-settings
+  - screenId: 06-settings
+    next: null

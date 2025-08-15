@@ -1,0 +1,137 @@
+# Moderátorský formulář "Nastavení respondenta".
+#
+# Každá položka ve `fields` je jedna proměnná testu. Uloží se do respondenta pod svým `name` a je
+# rovnou dostupná v obrazovkách jako `$bind: respondent.<name>`. Přidání proměnné je tedy úprava
+# tohoto souboru — žádný build, stačí nahrát soubor na server.
+#
+# Podrobný popis formátu je v docs/6-nastaveni-testu.md.
+
+title: Nastavení respondenta
+submitText: Spustit test
+downloadText: Stáhnout konfiguraci
+fileNameFrom: name
+
+# Plovoucí moderátorský panel během testu (ozubené kolo v rohu).
+overlay:
+  toggleLabel: Moderátorské ovládání
+  title: { field: name }
+  lines:
+    - field: segment
+      map:
+        retail: Běžný klient
+        premium: Prémiový klient
+    - { field: products, count: true, suffix: služeb }
+  restartText: Restartovat flow (stejný respondent)
+  endText: Ukončit test a smazat data
+
+fields:
+  - name: name
+    label: Jméno respondenta
+    type: text
+    validators:
+      - type: mandatory
+
+  - name: segment
+    label: Segment klienta
+    type: choice
+    control: radio
+    default: retail
+    options:
+      - { value: retail, label: Běžný klient }
+      - { value: premium, label: Prémiový klient }
+
+  - name: creditLimit
+    label: Schválený úvěrový rámec
+    type: number
+    suffix: Kč
+    default: 50000
+
+  - name: showTransactions
+    label: Zobrazit historii transakcí
+    type: boolean
+    default: true
+
+  # Složený objekt: seznam produktů, každý s vlastními poli.
+  - name: products
+    label: Produkty a služby respondenta
+    type: objectList
+    addText: + Přidat službu
+    modalTitle: Přidat službu
+    saveText: Přidat
+    cancelText: Zrušit
+    removeText: Odebrat
+    emptyText: Žádné služby.
+
+    summary: { label: Součet, sum: balance, suffix: Kč }
+
+    # Položka spadne do PRVNÍ skupiny, jejíž `where` splní.
+    groups:
+      - title: Aktivní
+        where:
+          - { field: active, notEquals: false }
+      - title: Neaktivní
+        where:
+          - { field: active, equals: false }
+
+    # Jak vypadá jeden řádek ve výpisu.
+    item:
+      label: { field: name }
+      value: { field: balance, suffix: Kč }
+      meta:
+        - { label: Číslo účtu, field: accountNumber }
+
+    # Formulář v modálním okně — stejný slovník polí jako nahoře.
+    fields:
+      - name: type
+        label: Druh služby
+        type: choice
+        default: ucet
+        options:
+          - { value: ucet, label: Běžný účet }
+          - { value: sporeni, label: Spoření }
+          - { value: investice, label: Investice }
+          - { value: pojisteni, label: Pojištění }
+          - { value: karta, label: Kreditní karta }
+          - { value: uver, label: Úvěr }
+
+      - name: name
+        label: Název
+        type: text
+        defaultFrom:
+          field: type
+          map:
+            ucet: Běžný účet
+            sporeni: Spoření
+            investice: Investiční portfolio
+            pojisteni: Životní pojištění
+            karta: Kreditní karta
+            uver: Úvěr
+
+      - name: balance
+        label: Zůstatek
+        type: number
+        suffix: Kč
+        # Popisek se mění podle druhu služby — u úvěru a karty jde o dluh, u pojištění o platbu.
+        labelWhen:
+          - when:
+              - { field: type, in: [karta, uver] }
+            label: Dlužná částka
+          - when:
+              - { field: type, equals: pojisteni }
+            label: Měsíční pojistné
+
+      # Číslo účtu má smysl jen u účtu a spoření; u karty a úvěru se neptáme ani neukládá.
+      - name: accountNumber
+        label: Číslo účtu
+        type: text
+        showWhen:
+          - { field: type, in: [ucet, sporeni] }
+
+      - name: active
+        label: Aktivní
+        type: choice
+        control: radio
+        default: true
+        options:
+          - { value: true, label: Ano }
+          - { value: false, label: Ne }

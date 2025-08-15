@@ -1,0 +1,8 @@
+# Doménové widgety načítané za běhu z public/widgets/<Nazev>.html.
+#
+# Název = jméno souboru = název, kterým se widget píše v obrazovkách: `Widget Nazev id`.
+# Právě to, že je název uvedený tady (a ne v components.yaml), z prvku dělá widget a engine pak
+# prefix `Widget` v obrazovkách vynucuje.
+
+- ProductList
+- TransactionList

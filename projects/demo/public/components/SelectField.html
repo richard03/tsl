@@ -1,0 +1,51 @@
+<template>
+    <label class="co-select-field">
+      <span class="co-select-field__box{{showError ? ' co-select-field__box--error' : ''}}">
+        <span class="co-select-field__text">
+          <template data-if="selected">
+            <span class="co-select-field__caption">{{label}}</span>
+            <span class="co-select-field__value">{{selected.label}}</span>
+          </template>
+          <span data-else class="co-select-field__placeholder">{{label}}</span>
+        </span>
+        <span class="co-select-field__caret">
+          <img src="{{base}}resources/icon-caret-down.svg" alt="" width="16" height="9" />
+        </span>
+      </span>
+      <select
+        class="co-select-field__select"
+        :value="value ?? ''"
+        data-on-change="change"
+        data-on-blur="blur"
+      >
+        <option value="" disabled hidden>{{label}}</option>
+        <option data-for="opt in options" data-key="opt.value" :value="opt.value">{{opt.label}}</option>
+      </select>
+      <span data-if="showError" class="co-select-field__error">{{errorMessage}}</span>
+    </label>
+  </template>
+  
+  <script>
+    export default {
+      field: true,
+      validatable: true,
+      defaults: { label: "", options: [] },
+      state: { touched: false },
+  
+      compute: ({ props, state, lib }) => {
+        const errorMessage = lib.getValidationError(props.value ?? "", props.validators);
+        return {
+          selected: props.options.find((opt) => opt.value === props.value),
+          errorMessage,
+          // Chyby zůstanou skryté, dokud pole neopustíš nebo dokud je neodhalí zablokované odeslání.
+          showError: Boolean(errorMessage) && (state.touched || props.forceShowError),
+        };
+      },
+  
+      on: {
+        change: ({ props }, event) => props.onChange?.(event.target.value),
+        blur: ({ setState }) => setState({ touched: true }),
+      },
+    };
+  </script>
+  

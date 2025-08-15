@@ -1,0 +1,23 @@
+# 5. zastávka: widget nad datovým souborem.
+#
+# TransactionList si položky načte sám z public/data/transactions.yaml přes `lib.loadDataFile`.
+# Obrazovka mu jen řekne, který soubor a kolik položek ukázat.
+id: 05-transactions
+title: Transakce
+structure:
+  header:
+    - ScreenHeader transactions-header
+  content:
+    - Text transactions-heading
+    - Widget TransactionList transactions-list
+  footer:
+    - Button transactions-next
+attributes:
+  transactions-heading:
+    size: heading
+  transactions-list:
+    file: data/transactions.yaml
+    limit: 5
+  transactions-next:
+    action:
+      next: true

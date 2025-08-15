@@ -1,0 +1,53 @@
+<template>
+    <div
+      class="{{className}}"
+      :on-click="onClick"
+      :on-key-down="keyHandler"
+      :role="onClick ? 'button' : undefined"
+      :tab-index="onClick ? 0 : undefined"
+    >
+        <slot></slot>
+    </div>
+  </template>
+  
+  <style>
+    .co-tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+      padding: 16px;
+      overflow: hidden;
+    }
+  
+    .co-tile--clickable {
+      cursor: pointer;
+    }
+  </style>
+  
+  <script>
+    export default {
+      // `action` říká enginu, ať dlaždici předá `onClick` sestavené z `action:` v obrazovce.
+      // Potomky ze <slot> si přitom nechá — klikatelná dlaždice je pořád kontejner.
+      action: true,
+
+      defaults: { type: "account", label: "", showAmount: true },
+  
+      compute: ({ props }) => ({
+        className:
+          `co-tile co-tile--${props.type}` +
+          (props.onClick ? " co-tile--clickable" : ""),
+        // Klávesnicí se dá ovládat jen klikatelná dlaždice — odpovídá to role/tabindex výš.
+        keyHandler: props.onClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") props.onClick();
+            }
+          : undefined,
+      }),
+    };
+  </script>
+  

@@ -1,0 +1,16 @@
+# Univerzální komponenty načítané za běhu z public/components/<Nazev>.html.
+#
+# Název = jméno souboru = název, kterým se komponenta píše v obrazovkách: `Nazev id`.
+# Doménové widgety (`Widget Nazev id`) se registrují ve widgets.yaml.
+#
+# Přidání nové komponenty = nahrát soubor přes FTP a dopsat sem řádek. Build není potřeba.
+
+- ScreenHeader
+- Text
+- DataRow
+- Button
+- Image
+- InputField
+- SelectField
+- Divider
+- Tile

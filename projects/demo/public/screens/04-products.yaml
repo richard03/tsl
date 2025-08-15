@@ -1,0 +1,36 @@
+# 4. zastávka: widget nad daty respondenta.
+#
+# Widget se od komponenty pozná prefixem `Widget` a tím, že je uvedený ve widgets.yaml. Dostane celý
+# seznam produktů (`$bind`) a k tomu `where` — podmínky, podle kterých si má vybrat. Co znamená
+# "aktivní" tak zůstává v konfiguraci obrazovky, ne v kódu widgetu.
+id: 04-products
+title: Moje produkty
+structure:
+  header:
+    - ScreenHeader products-header
+  content:
+    - Text products-heading
+    - Widget ProductList products-active
+    - Divider
+    - Text products-inactive-heading
+    - Widget ProductList products-inactive
+  footer:
+    - Button products-next
+attributes:
+  products-heading:
+    size: heading
+  products-active:
+    products:
+      $bind: respondent.products
+    where:
+      - { field: active, notEquals: false }
+  products-inactive-heading:
+    size: subheading
+  products-inactive:
+    products:
+      $bind: respondent.products
+    where:
+      - { field: active, equals: false }
+  products-next:
+    action:
+      next: true

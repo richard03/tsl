@@ -1,0 +1,34 @@
+/*
+ * Vzhled sdílený VÍC komponentami.
+ *
+ * Cokoli, co patří jediné komponentě, žije v jejím <style> uvnitř public/components/<Nazev>.html —
+ * díky tomu se vzhled nahrává i maže spolu s komponentou. Sem patří jen to, co by se jinak muselo
+ * duplikovat; barvy a písmo do tokens.css.
+ */
+
+.co-text {
+    margin: 0;
+}
+
+.co-text--heading {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 28px;
+}
+
+.co-text--subheading {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.co-text--muted {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.co-divider {
+    width: 100%;
+    margin: 0;
+    border: none;
+    border-top: 1px solid var(--border);
+}

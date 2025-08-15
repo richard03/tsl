@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Odděluje localStorage tohoto prototypu od ostatních na stejném hostu a portu. -->
+    <meta name="prototyper-project" content="demo" />
+    <!-- User-testing prototype: never cache, so a redeployed build/config is always picked up. -->
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+    <!-- Pořadí vrstev i seznam souborů řeší styles/main.css. -->
+    <link rel="stylesheet" href="styles/main.css" />
+    <title>Prototyp – demo</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

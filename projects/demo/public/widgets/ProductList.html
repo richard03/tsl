@@ -1,0 +1,25 @@
+<template>
+  <p data-if="visible.length === 0" class="co-text co-text--muted">{{empty}}</p>
+  <template data-else data-for="product in visible" data-key="product.id">
+    <DataRow
+      :label="lib.productLabel(product)"
+      :value="lib.formatMoney(product.balance ?? 0)"
+      :tone="(product.balance ?? 0) < 0 ? 'negative' : 'neutral'"
+    ></DataRow>
+  </template>
+</template>
+
+<script>
+  export default {
+    defaults: { products: [], empty: "Žádné produkty." },
+
+    compute: ({ props, lib }) => ({
+      /**
+       * Obrazovka předá celý seznam produktů respondenta a k němu `where` — sadu podmínek, podle
+       * kterých se má filtrovat. Widget tak nemusí vědět, co znamená „aktivní": rozhodnutí zůstává
+       * v konfiguraci obrazovky a `lib.matchesItem` ho jen vyhodnotí.
+       */
+      visible: lib.sortProducts(props.products.filter((product) => lib.matchesItem(product, props.where))),
+    }),
+  };
+</script>

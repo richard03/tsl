@@ -1,0 +1,35 @@
+# Připravená konfigurace respondenta. Otevře se odkazem `?respondentId=jan-novak`, takže moderátor
+# nemusí před testem nic vyplňovat — hodí se pro vzdálené testování.
+#
+# Tvar odpovídá polím ze `setup.yaml`; `id` u produktů se doplní samo při načtení.
+name: Jan Novák
+segment: premium
+creditLimit: 120000
+showTransactions: true
+products:
+  - type: ucet
+    name: Běžný účet
+    balance: 34120
+    accountNumber: 2010671309/0300
+    active: true
+  - type: sporeni
+    name: Spoření s bonusem
+    balance: 185000
+    accountNumber: 2010671310/0300
+    active: true
+  - type: investice
+    name: Investiční portfolio
+    balance: 92000
+    active: true
+  - type: pojisteni
+    name: Životní pojištění
+    balance: 780
+    active: true
+  - type: karta
+    name: Kreditní karta
+    balance: -12400
+    active: true
+  - type: uver
+    name: Spotřebitelský úvěr
+    balance: -240000
+    active: false

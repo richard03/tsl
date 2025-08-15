@@ -1,0 +1,38 @@
+# 2. zastávka: vstupní pole a validace.
+#
+# Komponenty s příznakem `field` si samy ukládají hodnotu do dat pod klíčem z `field:` — odtud se na
+# ni pak kdekoli jinde odkážeš přes `data.<klíč>`. Odesílací tlačítko je "gated": dokud má obrazovka
+# chybu, klik neprojde a chyby se odhalí.
+id: 02-login
+title: Přihlášení
+structure:
+  header:
+    - ScreenHeader login-header
+  content:
+    - Text login-heading
+    - Text login-note
+    - InputField login-email
+    - InputField login-password
+  footer:
+    - Button login-submit
+attributes:
+  login-header:
+    showBackButton: true
+  login-heading:
+    size: heading
+  login-note:
+    size: muted
+  login-email:
+    field: email
+    inputType: email
+    validators:
+      - type: mandatory
+      - type: email
+  login-password:
+    field: password
+    inputType: password
+    validators:
+      - type: mandatory
+  login-submit:
+    action:
+      next: true

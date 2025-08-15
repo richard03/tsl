@@ -1,0 +1,18 @@
+/*
+ * Vstupní bod vzhledu prototypu. Jediný stylopis, na který se odkazuje index.html.
+ *
+ * První řádek určuje POŘADÍ VRSTEV. Rozhoduje o něm tahle deklarace, ne pořadí načtení souborů —
+ * proto se kaskáda nemůže rozejít ani u stylů, které se vkládají až za běhu (viz `components`).
+ *
+ *   prototyper  rám telefonu a moderátorské obrazovky (engine/src/engine.css)
+ *   tokens      barvy a písmo prototypu
+ *   components  vzhled komponent — soubor níž i <style> uvnitř public/components/*.html
+ *   widgets     vzhled doménových widgetů, smí přebít komponenty, ze kterých je složený
+ *   screens     rozvržení konkrétních obrazovek, má poslední slovo
+ */
+@layer prototyper, tokens, components, widgets, screens;
+
+@import url("tokens.css") layer(tokens);
+@import url("components.css") layer(components);
+@import url("widgets.css") layer(widgets);
+@import url("screens.css") layer(screens);

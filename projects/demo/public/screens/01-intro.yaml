@@ -1,0 +1,21 @@
+# 1. zastávka: nejjednodušší možná obrazovka.
+#
+# `structure` říká, CO na obrazovce je a jak je to zanořené. `attributes` říká, JAK se to má chovat —
+# klíčem je id prvku ze struktury. Texty tady nejsou; ty žijí v translations.properties.
+id: 01-intro
+title: Ukázkový prototyp
+structure:
+  header:
+    - ScreenHeader intro-header
+  content:
+    - Text intro-title
+    - Text intro-description
+  footer:
+    - Button intro-continue
+attributes:
+  intro-title:
+    size: heading
+  intro-continue:
+    # `next: true` pošle uživatele tam, kam ukazuje `next` u téhle obrazovky ve flow.yaml.
+    action:
+      next: true

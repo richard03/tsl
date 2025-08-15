@@ -1,0 +1,31 @@
+# User-testing prototype — content (respondent configs, screens, flow, JS build) is re-uploaded
+# between tests and must always be reloaded fresh, so caching is disabled site-wide.
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  Header set Pragma "no-cache"
+  Header set Expires "0"
+</IfModule>
+
+# Potřeba JEN pro routing: path ve flow.yaml (URL typu …/01-intro). Při routing: query
+# (…/?screen=01-intro) tenhle blok nedělá nic a server se nastavovat nemusí.
+#
+# Takové cesty na disku neexistují, takže je musí obsloužit index.html.
+#
+# OVĚŘENÍ, jestli to na serveru funguje: otevři …/__rewrite-test. Když se zobrazí "rewrite-ok",
+# je vše v pořádku a můžeš ve flow.yaml přepnout na routing: path. Když dostaneš 404, server
+# .htaccess nepoužívá (typicky se soubor nenahrál — FTP klienti tečkové soubory často skrývají)
+# nebo nemá mod_rewrite; v tom případě zůstaň u routing: query.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Kontrolní adresa, viz výše.
+  RewriteRule ^__rewrite-test$ rewrite-ok.txt [L]
+
+  # Existující soubor nebo adresář (assets, resources, *.yaml, HTML komponenty) servíruj přímo.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Cokoli dalšího je adresa obrazovky — appka si ji z URL přečte sama.
+  RewriteRule ^ index.html [L]
+</IfModule>

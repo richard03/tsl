@@ -1,0 +1,66 @@
+<template>
+  <div
+    class="{{className}}"
+    :on-click="onClick"
+    :on-key-down="keyHandler"
+    :role="onClick ? 'button' : undefined"
+    :tab-index="onClick ? 0 : undefined"
+  >
+    <img class="co-image__img" src="{{base}}resources/{{image}}" alt="{{alt}}" />
+  </div>
+</template>
+
+<style>
+  .co-image {
+    display: flex;
+    justify-content: center;
+  }
+
+  .co-image__img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .co-image--clickable {
+    cursor: pointer;
+  }
+
+  .co-image--full-bleed {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* .screen má vlastní boční odsazení 16px; vystoupíme z něj, aby obrázek přes celou šířku dosáhl
+     na skutečné okraje i na jinak běžné (ne full-bleed) obrazovce. Vynechá se, když je full-bleed už
+     sama obrazovka (padding: 0), aby se obrázek nevytlačil za rámeček podruhé. */
+  .screen:not(.screen--full-bleed) .co-image--full-bleed {
+    width: calc(100% + 32px);
+    margin: 0 -16px;
+  }
+
+  .co-image--full-bleed .co-image__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+  }
+</style>
+
+<script>
+  export default {
+    action: true,
+    defaults: { image: "", alt: "" },
+
+    compute: ({ props }) => ({
+      className:
+        "co-image" + (props.fullBleed ? " co-image--full-bleed" : "") + (props.onClick ? " co-image--clickable" : ""),
+      keyHandler: props.onClick
+        ? (e) => {
+            if (e.key === "Enter" || e.key === " ") props.onClick();
+          }
+        : undefined,
+    }),
+  };
+</script>

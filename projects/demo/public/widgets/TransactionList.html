@@ -1,0 +1,40 @@
+<template>
+  <p data-if="transactions === null" class="co-text co-text--muted">{{loadingText}}</p>
+  <p data-else-if="transactions.length === 0" class="co-text co-text--muted">{{empty}}</p>
+  <template data-else data-for="item in transactions" data-key="item.date + item.description">
+    <DataRow
+      :label="lib.formatDate(item.date) + ' — ' + item.description"
+      :value="lib.formatAmount(item.amount)"
+      :tone="item.amount > 0 ? 'positive' : 'negative'"
+    ></DataRow>
+  </template>
+</template>
+
+<script>
+  export default {
+    defaults: { file: "data/transactions.yaml", limit: 0, empty: "Žádné transakce.", loadingText: "Načítám…" },
+
+    // `null` znamená „ještě se načítá"; prázdné pole znamená „načteno, ale nic tam není".
+    state: { transactions: null },
+
+    compute: ({ props, state }) => ({
+      transactions:
+        state.transactions && props.limit > 0 ? state.transactions.slice(0, props.limit) : state.transactions,
+    }),
+
+    effects: [
+      {
+        // `watch` je povinný. Bez seznamu závislostí by se efekt spustil po každém překreslení,
+        // které sám způsobí zápisem do stavu — a zacyklil by se.
+        watch: ({ props }) => [props.file],
+        run: ({ props, setState, lib }) => {
+          lib
+            .loadDataFile(props.file)
+            .then((doc) => setState({ transactions: doc?.transactions ?? [] }))
+            // Chybějící soubor nesmí obrazovku shodit — ukáže se prázdný seznam.
+            .catch(() => setState({ transactions: [] }));
+        },
+      },
+    ],
+  };
+</script>
