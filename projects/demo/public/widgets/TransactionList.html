@@ -1,6 +1,6 @@
 <template>
-  <p data-if="transactions === null" class="co-text co-text--muted">{{loadingText}}</p>
-  <p data-else-if="transactions.length === 0" class="co-text co-text--muted">{{empty}}</p>
+  <Text data-if="transactions === null" size="muted" text="{{loadingText}}"></Text>
+  <Text data-else-if="transactions.length === 0" size="muted" text="{{empty}}"></Text>
   <template data-else data-for="item in transactions" data-key="item.date + item.description">
     <DataRow
       :label="lib.formatDate(item.date) + ' — ' + item.description"

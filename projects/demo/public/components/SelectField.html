@@ -24,7 +24,85 @@
       <span data-if="showError" class="co-select-field__error">{{errorMessage}}</span>
     </label>
   </template>
-  
+
+  <style>
+    .co-select-field {
+        position: relative;
+        display: block;
+    }
+
+    .co-select-field__box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 56px;
+        padding: 8px 12px;
+        border-radius: 4px 4px 0 0;
+        background: var(--surface-variant);
+        border-bottom: 2px solid var(--control-border);
+        transition: border-color 0.15s;
+    }
+
+    .co-select-field__box:focus-within {
+        border-bottom-color: var(--accent);
+    }
+
+    .co-select-field__box--error {
+        border-bottom-color: var(--danger);
+    }
+
+    .co-select-field__text {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .co-select-field__placeholder {
+        font-size: 16px;
+        line-height: 24px;
+        color: var(--text-muted);
+    }
+
+    .co-select-field__caption {
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--text-muted);
+    }
+
+    .co-select-field__value {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        color: var(--text);
+    }
+
+    .co-select-field__caret {
+        flex-shrink: 0;
+        display: flex;
+        color: var(--text-muted);
+    }
+
+    .co-select-field__select {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        border: none;
+        cursor: pointer;
+    }
+
+    .co-select-field__error {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--danger);
+    }
+  </style>
+
   <script>
     export default {
       field: true,

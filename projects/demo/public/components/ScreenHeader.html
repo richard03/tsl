@@ -39,6 +39,16 @@
       background: none;
       color: var(--info);
       cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    .co-screen-header-bar__back:hover {
+      background: var(--info-soft);
+    }
+
+    .co-screen-header-bar__back:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
   
     .co-screen-header-bar__title {

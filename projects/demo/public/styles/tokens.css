@@ -2,9 +2,23 @@
  * Barvy a písmo prototypu.
  *
  * Engine má vlastní neutrální výchozí hodnoty, aby fungoval i bez tohoto souboru; co je tady, je
- * přebije. Zatím si demo vystačí s výchozími — až budeš chtít vlastní paletu, přepiš je tady:
- *
- *   :root {
- *     --accent: #007bff;
- *   }
+ * přebije. Paleta níž vychází z Material Design 3 (baseline tóny) — --accent-soft a
+ * --surface-variant jsou tokeny navíc oproti enginu, které si komponenty demo projektu berou pro
+ * tónovaná pozadí (outlined/tonal tlačítka, filled pole).
  */
+:root {
+  --text: #1c1b1f;
+  --text-muted: #49454f;
+  --bg: #f6f2fa;
+  --surface: #fffbfe;
+  --surface-variant: #e7e0ec;
+  --border: #cac4d0;
+  --control-border: #79747e;
+  --accent: #6750a4;
+  --accent-contrast: #ffffff;
+  --accent-soft: #eaddff;
+  --info: #0061a4;
+  --info-soft: #d1e4ff;
+  --danger: #ba1a1a;
+  --success: #2e7d32;
+}

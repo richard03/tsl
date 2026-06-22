@@ -1,8 +1,38 @@
 <template>
     <p class="co-text co-text--{{size}}">{{text}}</p>
   </template>
-  
+
+  <style>
+    .co-text {
+        margin: 0;
+        color: var(--text);
+    }
+
+    .co-text--heading {
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 28px;
+    }
+
+    .co-text--subheading {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+    }
+
+    .co-text--paragraph {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+    }
+
+    .co-text--muted {
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--text-muted);
+    }
+  </style>
+
   <script>
     export default { defaults: { size: "paragraph", text: "" } };
   </script>
-  
