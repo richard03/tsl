@@ -11,11 +11,10 @@
     "check:components": "node scripts/check-html-components.cjs",
     "check:docs": "node scripts/check-docs.cjs",
     "check:demo": "node projects/demo/scripts/check-flow.cjs",
-    "dev:konsolidace": "vite projects/demo",
+    "dev:konsolidace": "vite projects/konsolidace",
     "dev:demo": "vite projects/demo",
     "build:demo": "tsc -b projects/demo && vite build projects/demo",
-    "build:demo": "tsc -b projects/demo && vite build projects/demo",
-    "preview:konsolidace": "vite preview projects/demo",
+    "preview:konsolidace": "vite preview projects/konsolidace",
     "check:interactions": "node projects/demo/scripts/check-interactions.cjs"
   },
   "dependencies": {
