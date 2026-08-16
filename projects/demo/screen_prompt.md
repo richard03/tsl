@@ -44,6 +44,7 @@ KATALOG PROJEKTU „demo"
 | `SelectField` | výběr z možností | `label` (`""`), `options` (`[]`, prvky `{ value, label }`) | `field: true`, `validatable: true`; bez `<slot>` |
 | `Divider` | vodorovná linka | — (žádné props) | bez `<slot>`, bez `field`/`action`; nic na ni neodkazuje → v `structure` může být bez `id` |
 | `Tile` | dlaždice/kontejner, volitelně klikací rozcestník | `type` (název CSS varianty, `account`) | `action: true` — MÁ `<slot>`, potomky ze `structure` pustí dovnitř (viz `03-dashboard.yaml`) |
+| `Modal` | modální okno přes celou obrazovku, volitelně s nadpisem | `open` (`false`), `title` (`""`) | MÁ `<slot>`, zavírání (backdrop/„×") jde přes `onClose` — POZOR: `open` i obsluha tlačítek uvnitř (potvrdit/zrušit) typicky potřebují lokální `state`, který v `structure`/`attributes` obrazovky vyjádřit nejde; proto se `Modal` skoro vždy skládá UVNITŘ šablony nějakého widgetu (viz `NewProductForm`), ne přímo v `structure` obrazovky |
 
 ## Widgety (`public/widgets/*.html`, zápis `Widget Typ id`)
 
@@ -51,6 +52,8 @@ KATALOG PROJEKTU „demo"
 | --- | --- | --- | --- |
 | `ProductList` | vypíše produkty respondenta (přes `DataRow`) | `products` (`[]`; typicky `{ $bind: respondent.products }`), `where` (pole podmínek pro filtr — vyhodnocuje `lib.matchesItem`), `empty` (`"Žádné produkty."`) | bez `<slot>` — položky si vygeneruje sám z `products`, žádní potomci ve `structure` |
 | `TransactionList` | vypíše transakce z datového souboru (přes `DataRow`) | `file` (`"data/transactions.yaml"`), `limit` (`0` = bez omezení), `empty` (`"Žádné transakce."`), `loadingText` (`"Načítám…"`) | bez `<slot>` — data si načte sám za běhu, žádní potomci ve `structure` |
+| `InterestResult` | dopočítá a zobrazí složené úročení (přes `DataRow`) | `principal` (`0`), `ratePercent` (`0`), `years` (`0`) — typicky všechny tři přes `$bind` na tři samostatná `InputField` na téže obrazovce | bez `<slot>` — jen čte props a počítá; žádní potomci ve `structure` |
+| `NewProductForm` | formulář nového produktu (`InputField`×2, `SelectField`) s potvrzovacím `Modal` před zápisem | – (žádné props zvenčí; řídí se sám vlastním `state`) | bez `<slot>` na úrovni obrazovky — celý formulář i modál jsou zabalené uvnitř widgetu; zápis dat a navigace jdou přes `engine.updateRespondent`/`engine.runAction` ve `<script>` widgetu, ne přes `action:` v YAML |
 
 Tvým úkolem je vyrobit JEDEN výstupní soubor `<id>.yaml` přesně v tomto tvaru:
 
