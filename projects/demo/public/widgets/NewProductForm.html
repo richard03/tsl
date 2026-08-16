@@ -1,0 +1,65 @@
+<template>
+  <InputField label="Název produktu" :value="nazev" :on-change="setNazev"></InputField>
+  <SelectField label="Typ produktu" :options="typeOptions" :value="typ" :on-change="setTyp"></SelectField>
+  <InputField label="Počáteční zůstatek (Kč)" :value="castka" :on-change="setCastka"></InputField>
+  <!-- `<Button>` by se tu vykreslilo jako obyčejná HTML značka <button> (viz varování v konzoli při
+       načtení) — jméno komponenty se shoduje s nativní značkou, a ta uvnitř ŠABLONY jiné komponenty
+       vždycky vyhraje. Proto syrové <button> se stejnými třídami, jaké má Button.html ve <style>. -->
+  <button type="button" class="co-button co-button--primary" :disabled="!canSubmit" data-on-click="openConfirm">
+    Zřídit produkt
+  </button>
+
+  <Modal :open="confirmOpen" title="Opravdu produkt zřídit?" :on-close="closeConfirm">
+    <Text size="paragraph" :text="confirmText"></Text>
+    <button type="button" class="co-button co-button--secondary" data-on-click="closeConfirm">Zpět</button>
+    <button type="button" class="co-button co-button--primary" data-on-click="submitProduct">Ano, zřídit</button>
+  </Modal>
+</template>
+
+<script>
+  export default {
+    state: { nazev: "", typ: "ucet", castka: "", confirmOpen: false },
+
+    compute: ({ state, lib }) => {
+      const typeOptions = lib.productTypeOptions();
+      const typeLabel = typeOptions.find((option) => option.value === state.typ)?.label ?? "";
+      return {
+        typeOptions,
+        canSubmit: state.nazev.trim().length > 0,
+        confirmText: lib.fillTemplate("Založíme produkt „{nazev}“ ({typ}). Uvidíš ho v přehledu produktů.", {
+          nazev: state.nazev.trim() || "—",
+          typ: typeLabel,
+        }),
+      };
+    },
+
+    on: {
+      setNazev: ({ setState }, value) => setState({ nazev: value }),
+      setTyp: ({ setState }, value) => setState({ typ: value }),
+      setCastka: ({ setState }, value) => setState({ castka: value }),
+
+      // Klik na "Zřídit produkt" nic nezapisuje — jen otevře shrnutí k potvrzení.
+      openConfirm: ({ setState }) => setState({ confirmOpen: true }),
+      closeConfirm: ({ setState }) => setState({ confirmOpen: false }),
+
+      // Teprve potvrzení v modálu produkt skutečně založí a přesune na jeho výpis. `updateRespondent`
+      // a `runAction` dělají totéž, co by v obrazovce udělalo `setData`/`goto` — jen z kódu widgetu,
+      // protože rozhodnutí "založit, nebo ne" padá až po otevření modálu, ne hned při kliku.
+      submitProduct: ({ state, setState, engine }) => {
+        const product = {
+          id: `p-${Date.now().toString(36)}`,
+          type: state.typ,
+          name: state.nazev.trim(),
+          balance: Number(state.castka) || 0,
+          active: true,
+        };
+        engine.updateRespondent((respondent) => ({
+          ...respondent,
+          products: [...(respondent.products ?? []), product],
+        }));
+        setState({ confirmOpen: false });
+        engine.runAction({ goto: "04-products" });
+      },
+    },
+  };
+</script>

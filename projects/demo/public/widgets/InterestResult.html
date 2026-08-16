@@ -1,0 +1,24 @@
+<template>
+  <DataRow label="Konečná hodnota" :value="finalAmountText"></DataRow>
+  <DataRow label="Z toho úrok" :value="interestText" tone="positive"></DataRow>
+</template>
+
+<script>
+  export default {
+    // Obrazovka posílá tři samostatná pole z `data.*` přes `$bind` — widget je jen přečte a spočítá
+    // z nich jednu odvozenou hodnotu. Samotná formule je v `business.js`, ne tady.
+    defaults: { principal: 0, ratePercent: 0, years: 0 },
+
+    compute: ({ props, lib }) => {
+      const { finalAmount, interest } = lib.compoundInterest(
+        Number(props.principal) || 0,
+        Number(props.ratePercent) || 0,
+        Number(props.years) || 0
+      );
+      return {
+        finalAmountText: lib.formatMoney(finalAmount),
+        interestText: lib.formatMoney(interest),
+      };
+    },
+  };
+</script>

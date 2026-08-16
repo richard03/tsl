@@ -1,0 +1,111 @@
+<template>
+  <div data-if="open" class="co-modal">
+    <div class="co-modal__backdrop" data-on-click="close"></div>
+    <div class="co-modal__panel" role="dialog" aria-modal="true">
+      <div class="co-modal__header">
+        <h2 class="co-modal__title">{{title}}</h2>
+        <button
+          type="button"
+          class="co-modal__close"
+          aria-label="{{t('component.Modal.closeLabel', 'Zavřít')}}"
+          data-on-click="close"
+        >
+          <img src="{{base}}resources/icon-close.svg" alt="" width="16" height="16" />
+        </button>
+      </div>
+      <div class="co-modal__body">
+        <slot></slot>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+  .co-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .co-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .co-modal__panel {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+    background: var(--surface);
+    border-radius: 16px 16px 0 0;
+    padding: 20px 16px;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+    animation: co-modal-in 0.18s ease-out;
+  }
+
+  @keyframes co-modal-in {
+    from {
+      transform: translateY(16px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .co-modal__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .co-modal__title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .co-modal__close {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .co-modal__close:hover {
+    background: var(--surface-variant);
+  }
+
+  .co-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+</style>
+
+<script>
+  // Univerzální modál: neví nic o tom, co je uvnitř ani proč se zavírá — obojí řeší volající widget
+  // přes <slot> a `onClose`. Zavírání přes backdrop i "×" vede na stejnou obsluhu.
+  export default {
+    defaults: { title: "", open: false },
+    on: { close: ({ props }) => props.onClose?.() },
+  };
+</script>

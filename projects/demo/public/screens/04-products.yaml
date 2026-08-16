@@ -15,6 +15,7 @@ structure:
     - Text products-inactive-heading
     - Widget ProductList products-inactive
   footer:
+    - Button products-add
     - Button products-next
 attributes:
   products-heading:
@@ -31,6 +32,10 @@ attributes:
       $bind: respondent.products
     where:
       - { field: active, equals: false }
+  products-add:
+    type: secondary
+    action:
+      goto: 08-novy-produkt
   products-next:
     action:
       next: true

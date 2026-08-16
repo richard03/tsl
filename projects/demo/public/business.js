@@ -39,6 +39,21 @@ export function formatDate(iso) {
 }
 
 // ---------------------------------------------------------------------------
+// VÝPOČTY
+// ---------------------------------------------------------------------------
+
+/**
+ * Složené úročení: kolik naroste vklad `principal` při roční sazbě `ratePercent` (v procentech) po
+ * `years` letech, úročeno jednou ročně.
+ *
+ * Vrací celkovou částku i to, kolik z ní je čistý úrok — obrazovka ukazuje obojí zvlášť.
+ */
+export function compoundInterest(principal, ratePercent, years) {
+  const finalAmount = principal * Math.pow(1 + ratePercent / 100, years);
+  return { finalAmount, interest: finalAmount - principal };
+}
+
+// ---------------------------------------------------------------------------
 // PRODUKTY KLIENTA
 // ---------------------------------------------------------------------------
 
@@ -59,6 +74,11 @@ const TYPE_LABELS = {
 
 export function productLabel(product) {
   return product.name || TYPE_LABELS[product.type] || "Produkt";
+}
+
+/** Typy produktů nabízené při zakládání nového produktu, ve tvaru pro `SelectField`. */
+export function productTypeOptions() {
+  return Object.entries(TYPE_LABELS).map(([value, label]) => ({ value, label }));
 }
 
 /**

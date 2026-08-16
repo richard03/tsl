@@ -1,0 +1,19 @@
+# 8. zastávka: potvrzovací modální okno.
+#
+# Formulář i modál žijí v jednom widgetu (`NewProductForm`) — obrazovka jen widget vloží. Klik na
+# "Zřídit produkt" nic nezapisuje: widget si ho obslouží sám, otevře `Modal` se shrnutím a teprve po
+# potvrzení produkt skutečně založí a přesune na jeho výpis — přes `engine.updateRespondent` a
+# `engine.runAction` v kódu widgetu, ne přes `action:` v téhle obrazovce (ta tu proto vůbec není).
+id: 08-novy-produkt
+title: Nový produkt
+structure:
+  header:
+    - ScreenHeader novy-produkt-header
+  content:
+    - Text novy-produkt-heading
+    - Widget NewProductForm novy-produkt-formular
+attributes:
+  novy-produkt-header:
+    showBackButton: true
+  novy-produkt-heading:
+    size: heading

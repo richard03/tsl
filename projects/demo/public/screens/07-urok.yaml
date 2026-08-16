@@ -1,0 +1,44 @@
+# 7. zastávka: hodnota dopočítaná z víc vstupů.
+#
+# `InputField` zapisuje do `data.*` stejně jako na přihlašovací obrazovce — nic nového. Nové je, že
+# widget dostane všechny tři hodnoty přes `$bind` a spočítá si z nich jednu odvozenou — formule je
+# v `business.js` (`lib.compoundInterest`), ne v kódu widgetu.
+id: 07-urok
+title: Složené úročení
+structure:
+  header:
+    - ScreenHeader urok-header
+  content:
+    - Text urok-heading
+    - Text urok-note
+    - InputField urok-jistina
+    - InputField urok-sazba
+    - InputField urok-roky
+    - Divider
+    - Widget InterestResult urok-vysledek
+attributes:
+  urok-header:
+    showBackButton: true
+  urok-heading:
+    size: heading
+  urok-note:
+    size: muted
+  urok-jistina:
+    field: urokJistina
+    validators:
+      - { type: mandatory, message: "Vyplňte prosím vklad." }
+      - { type: positiveAmount }
+  urok-sazba:
+    field: urokSazba
+    validators:
+      - { type: mandatory, message: "Vyplňte prosím úrokovou sazbu." }
+      - { type: positiveNumber }
+  urok-roky:
+    field: urokRoky
+    validators:
+      - { type: mandatory, message: "Vyplňte prosím počet let." }
+      - { type: positiveNumber }
+  urok-vysledek:
+    principal: { $bind: data.urokJistina }
+    ratePercent: { $bind: data.urokSazba }
+    years: { $bind: data.urokRoky }

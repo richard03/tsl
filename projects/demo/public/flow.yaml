@@ -29,3 +29,10 @@ nodes:
     next: 06-settings
   - screenId: 06-settings
     next: null
+
+  # Obě obrazovky níž jsou samostatné ukázky, ne stanice hlavního flow — dosáhne se na ně jen
+  # výslovným `goto` (z dashboardu, resp. z výpisu produktů), zpátky vede šipka v hlavičce.
+  - screenId: 07-urok
+    next: null
+  - screenId: 08-novy-produkt
+    next: null

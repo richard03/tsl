@@ -17,6 +17,8 @@ structure:
     - Tile dash-transactions-tile:
         - Text dash-transactions-title
         - Text dash-transactions-note
+    - Tile dash-interest-tile:
+        - Text dash-interest-title
     - Divider
     - Tile dash-settings-tile:
         - Text dash-settings-title
@@ -35,6 +37,11 @@ attributes:
         - { field: active, notEquals: false }
     action:
       goto: 04-products
+  dash-interest-title:
+    size: subheading
+  dash-interest-tile:
+    action:
+      goto: 07-urok
   dash-transactions-title:
     size: subheading
   # Dlaždice se ukáže jen tehdy, když to moderátor u respondenta zapnul.
