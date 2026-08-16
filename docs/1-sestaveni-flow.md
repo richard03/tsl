@@ -14,6 +14,8 @@ Projekt `demo` je stavěný tak, že **každá obrazovka přidá jednu novou vla
 | `04-products` | widget nad daty respondenta, filtr `where`, větvení flow |
 | `05-transactions` | widget nad datovým souborem |
 | `06-settings` | `setData`, `$visibleIf` a `$disabledIf` nad `data.*` |
+| `07-urok` | hodnota dopočítaná z víc polí — widget dostane víc `$bind` props a spočítá odvozenou hodnotu |
+| `08-novy-produkt` | modální okno; widget si klik obslouží sám (`engine.updateRespondent`, `engine.runAction`) místo `action:` v YAML |
 
 Spuštění: `npm run dev:demo` → otevře se moderátorská obrazovka, kde zadáš respondenta a spustíš test.
 
@@ -86,6 +88,7 @@ Komponenty ukázkového prototypu. Vlastní si přidáš podle [2. Vlastní komp
 | `SelectField` | Výběr z možností | `label`, `options`, `field`, `validators` |
 | `Image` | Obrázek (i klikací) | `image` (soubor z `resources/`), `alt`, `action` |
 | `ScreenHeader` | Horní lišta obrazovky | `title`, `showBackButton` |
+| `Modal` | Modální okno přes celou obrazovku; pojme vnořené prvky | `open`, `title`; zavření přes `onClose` (backdrop i „×") |
 
 ### Doménové widgety (píší se `Widget Typ id`)
 
@@ -93,6 +96,8 @@ Komponenty ukázkového prototypu. Vlastní si přidáš podle [2. Vlastní komp
 | --- | --- | --- |
 | `ProductList` | Vypíše produkty respondenta | `products` (přes `$bind`), `where`, `empty` |
 | `TransactionList` | Vypíše položky z datového souboru | `file`, `limit`, `empty` |
+| `InterestResult` | Dopočítá a zobrazí složené úročení | `principal`, `ratePercent`, `years` (typicky přes `$bind`) |
+| `NewProductForm` | Formulář nového produktu + potvrzovací `Modal` před zápisem | – (řídí se sám vlastním stavem) |
 
 ## Vázání dat
 
