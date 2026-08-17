@@ -88,7 +88,7 @@ Pořadí je řízené kaskádovými vrstvami, deklarovanými v `public/styles/ma
 
 Změny v `engine.css` (na rozdíl od `public/styles/`) vyžadují build — je to kód enginu.
 
-`state.ts` ukládá do `localStorage` pod klíči `prototyper.<projekt>.respondent`, `.data` a `.currentScreenId`. Jméno projektu se bere z `<meta name="prototyper-project">` v `index.html` — bez něj by si dva prototypy na stejném hostu a portu sahaly do jednoho úložiště a jeden by startoval uprostřed flow toho druhého. `clearDataAndPosition` maže průběh (nový běh), `clearAll` i respondenta a zbytky po starších buildech.
+`state.ts` ukládá do `localStorage` pod klíči `prototyper.<projekt>.respondent`, `.currentScreenId` a — jedna položka za každou proměnnou zvlášť — `prototyper.<projekt>.data.<pole>`. Díky tomu je v devtools vidět a editovatelná jedna konkrétní odpověď, ne jeden velký JSON blob se všemi najednou. Jméno projektu se bere z `<meta name="prototyper-project">` v `index.html` — bez něj by si dva prototypy na stejném hostu a portu sahaly do jednoho úložiště a jeden by startoval uprostřed flow toho druhého. `clearDataAndPosition` maže průběh (nový běh, smaže všechny `.data.*` klíče), `clearAll` i respondenta a zbytky po starších buildech (včetně staršího jednoho `.data` blobu).
 
 ## Přidání nového projektu
 

@@ -15,16 +15,29 @@ function projectNamespace(): string {
 
 const PREFIX = `prototyper.${projectNamespace()}.`;
 
+/**
+ * `data.*` fields each get their own localStorage key (`prototyper.<project>.data.<field>`) instead
+ * of being bundled into one JSON blob under a single key — a single answer is then visible and
+ * editable on its own in devtools, instead of requiring the whole blob to be parsed by hand.
+ */
+const DATA_KEY_PREFIX = `${PREFIX}data.`;
+
 const KEYS = {
   respondent: `${PREFIX}respondent`,
-  data: `${PREFIX}data`,
   currentScreenId: `${PREFIX}currentScreenId`,
   /**
-   * Keys from before prototypes were namespaced. Never written any more and no longer read — a
-   * shared key is exactly what this change removes — but still cleared, so ending a test tidies up
-   * after a session that started on an older build.
+   * Keys from before prototypes were namespaced, plus the pre-per-field `.data` blob. Never written
+   * any more and no longer read, but still cleared, so ending a test tidies up after a session that
+   * started on an older build.
    */
-  legacy: ["prototyper.respondent", "prototyper.data", "prototyper.answers", "prototyper.currentScreenId", "prototyper.history"],
+  legacy: [
+    `${PREFIX}data`,
+    "prototyper.respondent",
+    "prototyper.data",
+    "prototyper.answers",
+    "prototyper.currentScreenId",
+    "prototyper.history",
+  ],
 } as const;
 
 /** Session data written by fields and `setData` actions (bound in YAML via the `data.*` namespace). */
@@ -46,20 +59,44 @@ export function saveRespondent(respondent: unknown): void {
   localStorage.setItem(KEYS.respondent, JSON.stringify(respondent));
 }
 
-/** Loads flow session data. */
-export function loadData(): Data {
-  const raw = localStorage.getItem(KEYS.data);
-  if (!raw) return {};
-  try {
-    return JSON.parse(raw) as Data;
-  } catch {
-    return {};
+/** All localStorage keys currently holding a `data.*` field for this project. */
+function dataKeys(): string[] {
+  const keys: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(DATA_KEY_PREFIX)) keys.push(key);
   }
+  return keys;
 }
 
-/** Persists flow session data to localStorage. */
+/** Loads flow session data, one field per localStorage key. */
+export function loadData(): Data {
+  const out: Data = {};
+  for (const key of dataKeys()) {
+    const raw = localStorage.getItem(key);
+    if (raw === null) continue;
+    try {
+      out[key.slice(DATA_KEY_PREFIX.length)] = JSON.parse(raw) as unknown;
+    } catch {
+      // A hand-edited or corrupted entry — skip it rather than fail the whole load.
+    }
+  }
+  return out;
+}
+
+/**
+ * Persists flow session data to localStorage, one key per field. Removes any existing field key
+ * that's no longer present in `data` first, so a field that's gone doesn't linger in storage and
+ * leak into a later run.
+ */
 export function saveData(data: Data): void {
-  localStorage.setItem(KEYS.data, JSON.stringify(data));
+  const wanted = new Set(Object.keys(data).map((field) => DATA_KEY_PREFIX + field));
+  for (const key of dataKeys()) {
+    if (!wanted.has(key)) localStorage.removeItem(key);
+  }
+  for (const [field, value] of Object.entries(data)) {
+    localStorage.setItem(DATA_KEY_PREFIX + field, JSON.stringify(value));
+  }
 }
 
 /** Loads the current screen id from localStorage. */
@@ -74,7 +111,7 @@ export function saveCurrentScreenId(screenId: string): void {
 
 /** Clears session data and navigation position (keeps the respondent). */
 export function clearDataAndPosition(): void {
-  localStorage.removeItem(KEYS.data);
+  for (const key of dataKeys()) localStorage.removeItem(key);
   localStorage.removeItem(KEYS.currentScreenId);
 }
 
