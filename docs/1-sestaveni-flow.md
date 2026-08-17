@@ -56,7 +56,7 @@ attributes:
   hlavicka: { showBackButton: true }
   nadpis: { size: heading }
   radek: { label: Zůstatek, value: "34 120 Kč" }
-  dal: { action: { next: true } }
+  dal: { action: next }
 ```
 
 Pravidla:
@@ -125,9 +125,10 @@ dlazdice:
 
 Možnosti `action`:
 - `setData: { klic: hodnota }` – zapíše do `data.*` (spustí se první).
-- `goto: <id-obrazovky>` – skok na danou obrazovku.
+- `goto: <id-obrazovky>` – skok na danou obrazovku, **bez ohledu na pravidla `next` v `flow.yaml`**. Použij jen pro navigaci, která z lineárního flow záměrně vybočuje (postranní obrazovka, záložka spodní lišty) — jinak zápis duplikuje to, co už říká `flow.yaml`, a při změně větvení se snadno rozejde.
 - `back: true` – zpět (jako šipka v hlavičce).
-- `next: true` – posune flow podle pravidel `next` v `flow.yaml` (viz níže).
+- `next: true` – posune flow podle pravidel `next` v `flow.yaml` (viz níže). Toto je výchozí chování běžného tlačítka "Pokračovat" i tehdy, když `action` nemá `goto` ani `back` (a `next` není `false`).
+- **`action: next`** / **`action: back`** – zkratky za `action: { next: true }` / `action: { back: true }`. Napiš je na každé tlačítko, které má prostě pokračovat dál podle `flow.yaml`, nebo se prostě vrátit — je to čitelnější než jednoklíčový objekt a hlavně nenechá nikoho hádat, jestli tlačítko potřebuje `goto`, nebo funguje samo. Kombinovat se `setData` jde jen v plné podobě: `action: { setData: {...}, next: true }`.
 
 ## Podmíněné zobrazení (`$visibleIf`)
 

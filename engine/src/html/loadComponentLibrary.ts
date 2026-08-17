@@ -108,7 +108,24 @@ function injectStyle(name: string, css: string): void {
 }
 
 /**
- * Reads one manifest — a plain YAML list of component names.
+ * One list item of a manifest is either a bare name (`- Nazev`) or a single-key mapping whose key
+ * is the name (`- Nazev:` with a nested value) — the mapping form lets a project document a
+ * component's attributes (type, default) right next to its registration, for readers who don't
+ * want to open the `.html` file just to see its shape. The nested value itself is never read by
+ * the engine; it's pure documentation.
+ */
+function manifestEntryName(item: unknown): string | undefined {
+  if (typeof item === "string") return item;
+  if (item !== null && typeof item === "object" && !Array.isArray(item)) {
+    const keys = Object.keys(item as Record<string, unknown>);
+    if (keys.length === 1) return keys[0];
+  }
+  return undefined;
+}
+
+/**
+ * Reads one manifest — a YAML list of component names (see `manifestEntryName` for the two shapes
+ * a list item may take).
  *
  * A missing manifest is fatal on purpose. Widget-ness comes from *which* manifest a name is in, so
  * silently treating an unreadable `widgets.yaml` as "no widgets" would make every `Widget <Type>`
@@ -134,9 +151,11 @@ async function readManifest(opts: LoadOptions, file: string): Promise<string[]> 
 
   const doc = load(text) ?? [];
   if (!Array.isArray(doc)) {
-    throw new Error(`${file}: očekává se seznam názvů, každý na svém řádku jako "- Nazev".`);
+    throw new Error(
+      `${file}: očekává se seznam názvů, každý na svém řádku jako "- Nazev" (volitelně "- Nazev:" s vnořenou dokumentací atributů).`,
+    );
   }
-  return doc.filter((name): name is string => typeof name === "string");
+  return doc.map(manifestEntryName).filter((name): name is string => name !== undefined);
 }
 
 /**

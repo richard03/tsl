@@ -80,8 +80,8 @@ function parseNode(
   const { $visibleIf, $disabledIf, ...props } = attrs;
 
   const instance: ComponentInstance = { id, type, props };
-  if ($visibleIf) instance.visibleIf = $visibleIf as Condition;
-  if ($disabledIf) instance.disabledIf = $disabledIf as Condition;
+  if ($visibleIf) instance.visibleIf = $visibleIf as Condition | Condition[];
+  if ($disabledIf) instance.disabledIf = $disabledIf as Condition | Condition[];
   if (childrenRaw) {
     instance.children = childrenRaw.map((child) => parseNode(child, attributes, usedIds, screenId, widgetTypes, autoId));
   }

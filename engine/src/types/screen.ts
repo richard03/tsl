@@ -26,13 +26,28 @@ export interface ButtonAction {
   back?: boolean;
 }
 
+/**
+ * What a screen YAML `action:` attribute may contain. The bare strings `next`/`back` are shorthand
+ * for `{ next: true }`/`{ back: true }` — the two common no-`setData` cases (an ordinary "continue"
+ * button, or a "cancel"/"back" button) — and read better in YAML than an object with one key.
+ */
+export type ActionSpec = ButtonAction | "next" | "back";
+
+/** Normalizes a resolved `action` prop (as read from screen YAML) into a `ButtonAction`. */
+export function resolveActionSpec(spec: ActionSpec | undefined): ButtonAction | undefined {
+  if (spec === "next") return { next: true };
+  if (spec === "back") return { back: true };
+  return spec;
+}
+
 export interface ComponentInstance {
   id: string;
   type: string;
   /** Omit entirely for parameterless components (e.g. Divider). */
   props?: Record<string, unknown>;
-  visibleIf?: Condition;
-  disabledIf?: Condition;
+  /** A bare list is AND — visible/disabled only when every condition in it passes. */
+  visibleIf?: Condition | Condition[];
+  disabledIf?: Condition | Condition[];
   /** Nested component instances, rendered as this component's React children (e.g. GroupShell). */
   children?: ComponentInstance[];
 }

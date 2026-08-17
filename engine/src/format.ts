@@ -2,9 +2,12 @@ export function onlyDigits(raw: string): string {
   return raw.replace(/\D/g, "");
 }
 
-/** Groups a digit string into Czech-style thousands separated by spaces, e.g. "250000" -> "250 000". */
+/**
+ * Groups a digit string into Czech-style thousands, e.g. "250000" -> "250 000". The separator
+ * is U+00A0 (non-breaking space), not a plain space — a number must never wrap across lines.
+ */
 export function formatThousands(digits: string): string {
-  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 /**

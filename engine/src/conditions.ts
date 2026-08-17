@@ -30,9 +30,14 @@ function evaluateAgainst(condition: Condition, root: unknown): boolean {
   return Boolean(value);
 }
 
-/** Evaluates a single visibility/flow condition against the current engine state. */
-export function evaluateCondition(condition: Condition, state: EvalState): boolean {
-  return evaluateAgainst(condition, state);
+/**
+ * Evaluates a visibility/flow condition against the current engine state. A bare list is AND —
+ * true only when every condition in it passes — the same convention `flow.yaml`'s `next[].when`
+ * already uses, so `$visibleIf`/`$disabledIf` can combine conditions the same way instead of only
+ * ever checking one field.
+ */
+export function evaluateCondition(condition: Condition | Condition[], state: EvalState): boolean {
+  return Array.isArray(condition) ? evaluateAll(condition, state) : evaluateAgainst(condition, state);
 }
 
 /** Returns true when every condition in the list passes. */

@@ -1,5 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import type { ButtonAction, ComponentInstance, ScreenDefinition } from "./types/screen";
+import {
+  resolveActionSpec,
+  type ActionSpec,
+  type ButtonAction,
+  type ComponentInstance,
+  type ScreenDefinition,
+} from "./types/screen";
 import type { Data } from "./state";
 import type { ComponentRegistry } from "./registry";
 import { evaluateCondition, type EvalState } from "./conditions";
@@ -177,7 +183,8 @@ export function ScreenRenderer({
     // navigates somewhere is an ordinary pattern, and dropping its content would leave the screen
     // silently empty. A component without a `<slot>` simply ignores them.
     if (entry.action) {
-      const { action, ...visualProps } = resolvedProps as { action?: ButtonAction } & Record<string, unknown>;
+      const { action: rawAction, ...visualProps } = resolvedProps as { action?: ActionSpec } & Record<string, unknown>;
+      const action = resolveActionSpec(rawAction);
       const actionChildren = instance.children?.map((child) => renderInstance(child));
       if (entry.gated) {
         const disabled = instance.disabledIf ? evaluateCondition(instance.disabledIf, state) : false;

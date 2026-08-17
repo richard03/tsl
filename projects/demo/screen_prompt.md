@@ -160,8 +160,8 @@ Ke každé vlastnosti uzlu, který skončil v `structure`:
   tento prompt, není to tvoje starost teď.)
 - NIKDY nevymýšlej `$bind`, `action.goto` ani jiné napojení na data/flow — Figma strom o datech
   a navigaci nic neví. Pokud vybraný typ vlastnost typu `action` vyžaduje k tomu, aby vůbec něco
-  dělal (`Button`, klikací `Tile`/`Image`), napiš `action: { }  # TODO: doplnit akci (goto/back/
-  next/setData)` a nech na autorovi flow, aby to doplnil.
+  dělal (`Button`, klikací `Tile`/`Image`), napiš `action: { }  # TODO: doplnit akci (action: next
+  pro pokračování podle flow.yaml, jinak goto/back/setData)` a nech na autorovi flow, aby to doplnil.
 
 ════════════════════════════════════════
 KROK 5 — Vnořování potomků, kteří zůstali z kroku 2
