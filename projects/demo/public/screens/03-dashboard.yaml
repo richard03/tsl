@@ -22,6 +22,9 @@ structure:
     - Divider
     - Tile dash-settings-tile:
         - Text dash-settings-title
+    - Tile dash-showcase-tile:
+        - Text dash-showcase-title
+        - Text dash-showcase-note
 attributes:
   dash-header:
     showBackButton: false
@@ -56,3 +59,8 @@ attributes:
   dash-settings-tile:
     action:
       goto: 06-settings
+  dash-showcase-title:
+    size: subheading
+  dash-showcase-tile:
+    action:
+      goto: 09-komponenty-formulare

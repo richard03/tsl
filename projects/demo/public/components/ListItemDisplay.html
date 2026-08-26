@@ -1,0 +1,52 @@
+<template>
+  <div class="co-list-item-display">
+    <span class="co-list-item-display__indicator" aria-hidden="true">
+      <img
+        data-if="indicator === 'check'"
+        src="{{base}}resources/icon-check.svg"
+        alt=""
+        width="16"
+        height="13"
+      />
+      <span data-else class="co-list-item-display__dot"></span>
+    </span>
+    <span class="co-list-item-display__label">{{label}}</span>
+  </div>
+</template>
+
+<style>
+  .co-list-item-display {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .co-list-item-display__indicator {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+  }
+
+  .co-list-item-display__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .co-list-item-display__label {
+    flex: 1;
+    min-width: 0;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+</style>
+
+<script>
+  export default { defaults: { indicator: "check", label: "" } };
+</script>

@@ -1,0 +1,351 @@
+<template>
+  <!-- Jen pro čtení: pouze hodnota, žádná dráha, žádný řádek min/max, žádná tužka pro editaci. -->
+  <div data-if="readOnly" class="co-value-slider">
+    <div class="co-value-slider__header">
+      <span class="co-value-slider__value">{{readOnlyValue}}</span>
+      <span data-if="unit" class="co-value-slider__unit">{{unit}}</span>
+    </div>
+  </div>
+
+  <div data-else class="co-value-slider">
+    <div class="co-value-slider__header">
+      <span class="co-value-slider__value">{{currentLabel}}</span>
+      <span data-if="unit" class="co-value-slider__unit">{{unit}}</span>
+      <button
+        type="button"
+        class="co-value-slider__edit-button"
+        :aria-label="t('component.ValueSlider.editButtonLabel', 'Upravit hodnotu')"
+        data-on-click="openSheet"
+      >
+        <img class="co-value-slider__edit-icon" src="{{base}}resources/icon-edit.svg" alt="" />
+      </button>
+    </div>
+
+    <div
+      data-ref="track"
+      class="co-value-slider__track-row"
+      role="slider"
+      :aria-valuemin="min"
+      :aria-valuemax="max"
+      :aria-valuenow="current"
+      data-on-pointerdown="pointerDown"
+      data-on-pointermove="pointerMove"
+      data-on-pointerup="endDrag"
+      data-on-pointercancel="endDrag"
+    >
+      <div class="co-value-slider__track-bg"></div>
+      <div class="co-value-slider__track-fill" style="width: {{percent}}%"></div>
+      <div class="co-value-slider__thumb" style="left: {{percent}}%"></div>
+    </div>
+
+    <div class="co-value-slider__minmax-row">
+      <span class="co-value-slider__minmax">{{minLabel}}{{unitMin ? ' ' + unitMin : ''}}</span>
+      <span class="co-value-slider__minmax">{{maxLabel}}{{unitMax ? ' ' + unitMax : ''}}</span>
+    </div>
+
+    <div data-if="sheetOpen" class="co-value-slider-sheet-overlay" data-on-click="closeSheet">
+      <div class="co-value-slider-sheet" data-on-click="stop">
+        <div class="co-value-slider-sheet__handle"></div>
+        <div
+          data-if="sheetOptions"
+          class="co-value-slider-sheet__options"
+          role="radiogroup"
+          :aria-label="t('component.ValueSlider.editorLabel', 'Zadejte hodnotu')"
+        >
+          <label class="co-value-slider-sheet__option" data-for="opt in sheetOptions" data-key="opt.value">
+            <input
+              type="radio"
+              :name="uid"
+              class="co-value-slider-sheet__option-input"
+              :checked="current === opt.value"
+              :on-change="() => selectOption(opt.value)"
+            />
+            <span class="co-value-slider-sheet__option-label">{{opt.label}}</span>
+          </label>
+        </div>
+        <template data-else>
+          <InputField
+            :label="t('component.ValueSlider.editorLabel', 'Zadejte hodnotu')"
+            :value="draftValue"
+            :on-change="setDraft"
+          ></InputField>
+          <button
+            type="button"
+            class="co-value-slider-sheet__confirm"
+            data-on-click="confirmSheet"
+          >
+            {{t('component.ValueSlider.confirmButtonText', 'Potvrdit')}}
+          </button>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+  .co-value-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+
+  .co-value-slider__header {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 8px 16px;
+  }
+
+  .co-value-slider__value {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 36px;
+    color: var(--text);
+  }
+
+  .co-value-slider__unit {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: var(--text-muted);
+    padding: 6px 0;
+  }
+
+  .co-value-slider__edit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--accent);
+  }
+
+  .co-value-slider__edit-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .co-value-slider__track-row {
+    position: relative;
+    height: 40px;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .co-value-slider__track-bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: 999px;
+    background: var(--surface-variant);
+  }
+
+  .co-value-slider__track-fill {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .co-value-slider__thumb {
+    position: absolute;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 4px rgba(103, 80, 164, 0.15);
+  }
+
+  .co-value-slider__minmax-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .co-value-slider__minmax {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--text-muted);
+  }
+
+  /* `fixed`, ne `absolute`: komponenta se vykresluje uvnitř rolovatelného .screen, takže by se
+     "absolute" pozicovalo vůči němu (nejbližší pozicovaný předek) a při scrollu ujíždělo spolu
+     s obsahem — po scrollu dolů by se panel objevil až nad viditelnou částí obrazovky. `fixed`
+     tohle obchází a přitom díky transformu na .phone (viz engine.css) pořád překryje jen telefon. */
+  .co-value-slider-sheet-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: flex-end;
+    z-index: 10;
+  }
+
+  .co-value-slider-sheet {
+    width: 100%;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    padding: 12px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .co-value-slider-sheet__handle {
+    align-self: center;
+    width: 32px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border);
+  }
+
+  .co-value-slider-sheet__confirm {
+    width: 100%;
+    min-height: 40px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+
+  .co-value-slider-sheet__options {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  .co-value-slider-sheet__option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 4px;
+    cursor: pointer;
+  }
+
+  .co-value-slider-sheet__option-input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--control-border);
+    border-radius: 999px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+
+  .co-value-slider-sheet__option-input:checked {
+    border-color: var(--accent);
+  }
+
+  .co-value-slider-sheet__option-input:checked::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .co-value-slider-sheet__option-label {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+</style>
+
+<script>
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  const formatNumber = (value) => Math.round(value).toLocaleString("cs-CZ");
+
+  /** Hodnota pod `clientX`, přichycená na násobky `step` a oříznutá rozsahem dráhy. */
+  function valueFromClientX(clientX, rect, min, max, step) {
+    const percent = rect.width === 0 ? 0 : (clientX - rect.left) / rect.width;
+    const raw = min + clamp(percent, 0, 1) * (max - min);
+    if (!step || step <= 0) return clamp(raw, min, max);
+    // Přichytáváme k násobkům kroku počítaným od `min` (ne od nuly), takže `min` padne na krok vždy.
+    // `max` ale nemusí — když rozsah není celý násobek kroku (typicky užší rozsah než jeden krok),
+    // "od minima" přichycená hodnota by mohla `max` přeskočit a nechat ho dosažitelné jen na úplně
+    // posledním pixelu dráhy. Porovnáme vzdálenost k oříznuté hodnotě "od minima" s krajním `max` a
+    // vezmeme tu bližší — obě krajní hodnoty tak jdou vždy zvolit stejně snadno.
+    const steppedFromMin = clamp(min + Math.round((raw - min) / step) * step, min, max);
+    return Math.abs(raw - steppedFromMin) <= Math.abs(raw - max) ? steppedFromMin : max;
+  }
+
+  export default {
+    field: true,
+    defaults: { min: 0, max: 0, readOnly: false },
+    state: { sheetOpen: false, draftValue: "" },
+
+    compute: ({ props }) => {
+      const current = clamp(props.value ?? props.min, props.min, props.max);
+      return {
+        current,
+        currentLabel: formatNumber(current),
+        readOnlyValue: formatNumber(props.value ?? 0),
+        minLabel: formatNumber(props.min),
+        maxLabel: formatNumber(props.max),
+        percent: props.max === props.min ? 0 : ((current - props.min) / (props.max - props.min)) * 100,
+      };
+    },
+
+    on: {
+      openSheet: ({ derived, setState }) =>
+        setState({ draftValue: String(Math.round(derived.current)), sheetOpen: true }),
+      closeSheet: ({ setState }) => setState({ sheetOpen: false }),
+      stop: (_ctx, event) => event.stopPropagation(),
+      setDraft: ({ setState }, value) => setState({ draftValue: value }),
+
+      confirmSheet: ({ props, state, setState }) => {
+        const parsed = Number(state.draftValue);
+        if (!Number.isNaN(parsed)) props.onChange?.(clamp(parsed, props.min, props.max));
+        setState({ sheetOpen: false });
+      },
+
+      selectOption: ({ props, setState }, optionValue) => {
+        props.onChange?.(clamp(optionValue, props.min, props.max));
+        setState({ sheetOpen: false });
+      },
+
+      pointerDown: ({ props, self, refs }, e) => {
+        self.dragPointerId = e.pointerId;
+        refs.track?.setPointerCapture(e.pointerId);
+        if (refs.track) {
+          props.onChange?.(valueFromClientX(e.clientX, refs.track.getBoundingClientRect(), props.min, props.max, props.step));
+        }
+      },
+
+      pointerMove: ({ props, self, refs }, e) => {
+        if (self.dragPointerId !== e.pointerId || !refs.track) return;
+        props.onChange?.(valueFromClientX(e.clientX, refs.track.getBoundingClientRect(), props.min, props.max, props.step));
+      },
+
+      endDrag: ({ self, refs }, e) => {
+        if (self.dragPointerId !== e.pointerId) return;
+        refs.track?.releasePointerCapture(e.pointerId);
+        self.dragPointerId = null;
+      },
+    },
+  };
+</script>

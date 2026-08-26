@@ -1,0 +1,121 @@
+<template>
+  <div class="co-swipe-list">
+    <div
+      data-ref="track"
+      class="co-swipe-list__track co-swipe-list__track--gap-{{gap}}"
+      data-on-pointerdown="down"
+      data-on-pointermove="move"
+      data-on-pointerup="end"
+      data-on-pointerleave="end"
+      data-on-pointercancel="end"
+    ><slot></slot></div>
+  </div>
+</template>
+
+<style>
+  .co-swipe-list {
+    width: 100%;
+  }
+
+  .co-swipe-list__track {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    touch-action: pan-x;
+    cursor: grab;
+    margin: 0 -16px;
+    padding: 2px 16px;
+    scroll-padding: 0 16px;
+  }
+
+  .co-swipe-list__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .co-swipe-list__track--dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+
+  .co-swipe-list__track > * {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .co-swipe-list__track--gap-none {
+    gap: 0;
+  }
+
+  .co-swipe-list__track--gap-xs {
+    gap: 4px;
+  }
+
+  .co-swipe-list__track--gap-sm {
+    gap: 8px;
+  }
+
+  .co-swipe-list__track--gap-md {
+    gap: 16px;
+  }
+
+  .co-swipe-list__track--gap-lg {
+    gap: 24px;
+  }
+
+  .co-swipe-list__track--gap-xl {
+    gap: 32px;
+  }
+</style>
+
+<script>
+  const DRAG_THRESHOLD_PX = 5;
+
+  export default {
+    defaults: { gap: "md" },
+
+    on: {
+      down: ({ self, refs }, e) => {
+        // Dotyk a pero rolují nativně přes `overflow-x: auto`; tažení myší je potřeba dodělat.
+        if (e.pointerType !== "mouse") return;
+        const el = refs.track;
+        if (!el) return;
+        self.drag = { pointerId: e.pointerId, startX: e.clientX, scrollLeft: el.scrollLeft, moved: false };
+        el.setPointerCapture(e.pointerId);
+      },
+
+      move: ({ self, refs }, e) => {
+        const drag = self.drag;
+        const el = refs.track;
+        if (!drag || !el || drag.pointerId !== e.pointerId) return;
+        const dx = e.clientX - drag.startX;
+        if (Math.abs(dx) > DRAG_THRESHOLD_PX) {
+          drag.moved = true;
+          el.classList.add("co-swipe-list__track--dragging");
+        }
+        el.scrollLeft = drag.scrollLeft - dx;
+      },
+
+      end: ({ self, refs }, e) => {
+        const drag = self.drag;
+        const el = refs.track;
+        if (!drag || !el || drag.pointerId !== e.pointerId) return;
+        el.releasePointerCapture(e.pointerId);
+        el.classList.remove("co-swipe-list__track--dragging");
+        if (drag.moved) {
+          const suppressClick = (ev) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            el.removeEventListener("click", suppressClick, true);
+          };
+          el.addEventListener("click", suppressClick, true);
+        }
+        self.drag = null;
+      },
+    },
+  };
+</script>

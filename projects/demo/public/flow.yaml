@@ -36,3 +36,9 @@ nodes:
     next: null
   - screenId: 08-novy-produkt
     next: null
+  - screenId: 09-komponenty-formulare
+    next: null
+  - screenId: 10-komponenty-obsah
+    next: null
+  - screenId: 11-komponenty-navigace
+    next: null

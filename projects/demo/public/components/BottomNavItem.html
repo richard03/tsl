@@ -1,0 +1,64 @@
+<template>
+  <button type="button" class="{{className}}" data-on-click="click">
+    <span class="co-bottom-nav-item__icon-wrap">
+      <img src="{{base}}resources/{{icon}}" alt="" width="24" height="24" />
+    </span>
+    <span class="co-bottom-nav-item__label">{{label}}</span>
+  </button>
+</template>
+
+<style>
+  .co-bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0 12px;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .co-bottom-nav-item__icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 32px;
+    border-radius: 16px;
+    transition: background-color 0.15s;
+  }
+
+  .co-bottom-nav-item--active {
+    color: var(--text);
+  }
+
+  .co-bottom-nav-item--active .co-bottom-nav-item__icon-wrap {
+    background: var(--accent-soft);
+  }
+
+  .co-bottom-nav-item--active .co-bottom-nav-item__label {
+    font-weight: 600;
+  }
+
+  .co-bottom-nav-item__label {
+    font-size: 12px;
+    line-height: 16px;
+  }
+</style>
+
+<script>
+  export default {
+    action: true,
+    defaults: { label: "", icon: "icon-home.svg", active: false },
+
+    compute: ({ props }) => ({
+      className: "co-bottom-nav-item" + (props.active ? " co-bottom-nav-item--active" : ""),
+    }),
+
+    on: { click: ({ props }) => props.onClick?.() },
+  };
+</script>

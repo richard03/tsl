@@ -1,0 +1,95 @@
+<template>
+  <button type="button" class="co-list-item-action" :title="inactiveTitle" data-on-click="click">
+    <span data-if="showStartIcon" class="co-list-item-action__icon" aria-hidden="true">
+      <img src="{{base}}resources/icon-{{startIcon}}.svg" alt="" width="20" height="20" />
+    </span>
+    <span class="co-list-item-action__text">
+      <span class="co-list-item-action__label">{{label}}</span>
+      <span data-if="description" class="co-list-item-action__description">{{description}}</span>
+    </span>
+    <span class="co-list-item-action__chevron" aria-hidden="true">
+      <img src="{{base}}resources/icon-chevron-right.svg" alt="" width="9" height="16" />
+    </span>
+  </button>
+</template>
+
+<style>
+  .co-list-item-action {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 8px;
+    border-radius: 12px;
+    background: none;
+    border: none;
+    font: inherit;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  .co-list-item-action:hover {
+    background: var(--surface-variant);
+  }
+
+  .co-list-item-action:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .co-list-item-action__icon,
+  .co-list-item-action__chevron {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+
+  .co-list-item-action__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .co-list-item-action__label {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+
+  .co-list-item-action__description {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  const START_ICONS = ["pdf", "document"];
+
+  export default {
+    action: true,
+    defaults: { label: "", showStartIcon: false, swapStartIcon: "document" },
+
+    compute: ({ props, t }) => ({
+      startIcon: START_ICONS.includes(props.swapStartIcon) ? props.swapStartIcon : "document",
+      inactiveTitle: props.onClick
+        ? undefined
+        : t("component.ListItemAction.inactiveLinkTitle", "Odkaz je v prototypu neaktivní"),
+    }),
+
+    on: {
+      click: ({ props }, event) => {
+        if (props.onClick) props.onClick();
+        else event.preventDefault();
+      },
+    },
+  };
+</script>

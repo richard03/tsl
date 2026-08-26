@@ -1,0 +1,113 @@
+id: 09-komponenty-formulare
+title: Ukázka — formulářové komponenty
+structure:
+  header:
+    - ScreenHeader header
+  content:
+    - Text heading
+    - SectionShell section-checks:
+        - Text label-checks
+        - GroupShell group-checks:
+            - CheckBoxField chk1
+            - CheckBoxField chk2
+    - Divider
+    - SectionShell section-radio:
+        - Text label-radio
+        - GroupShell group-radio:
+            - RadioButtonField radio1
+            - RadioButtonField radio2
+            - RadioButtonField radio3
+    - Divider
+    - SectionShell section-slider:
+        - Text label-slider
+        - ValueSlider slider1
+        - Text label-slider-options
+        - ValueSlider slider2
+    - Divider
+    - SectionShell section-sumrow:
+        - Text label-sumrow
+        - SumRow sum-plain
+        - SumRow sum-slider
+    - Divider
+    - SectionShell section-progress:
+        - Text label-progress
+        - ProgressIndicator progress-demo
+  footer:
+    - Button next-btn
+attributes:
+  header:
+  heading:
+    size: heading
+  section-checks:
+    gap: sm
+  label-checks:
+    size: subheading
+  group-checks:
+    gap: xs
+  chk1:
+    checked: true
+  chk2:
+  section-radio:
+    gap: sm
+  label-radio:
+    size: subheading
+  group-radio:
+    gap: xs
+  radio1:
+    variable: frekvence
+    checked: true
+  radio2:
+    variable: frekvence
+  radio3:
+    variable: frekvence
+  section-slider:
+    gap: sm
+  label-slider:
+    size: subheading
+  slider1:
+    variable: castka
+    min: 0
+    max: 500000
+    step: 1000
+    unit: Kč
+  label-slider-options:
+    size: subheading
+  slider2:
+    variable: obdobi
+    min: 1
+    max: 3
+    sheetOptions:
+      - value: 1
+        label: 1 rok
+      - value: 2
+        label: 2 roky
+      - value: 3
+        label: 3 roky
+  section-sumrow:
+    gap: sm
+  label-sumrow:
+    size: subheading
+  sum-plain:
+    items:
+      $bind: respondent.products
+    where:
+      - { field: active, truthy: true }
+    unit: Kč
+  sum-slider:
+    items:
+      $bind: respondent.products
+    where:
+      - { field: active, truthy: true }
+    slider: true
+    title: Stejný součet jako slider (jen pro čtení)
+    unit: Kč
+  section-progress:
+    gap: sm
+  label-progress:
+    size: subheading
+  progress-demo:
+    progress: 65
+  next-btn:
+    type: primary
+    action:
+      goto: 10-komponenty-obsah

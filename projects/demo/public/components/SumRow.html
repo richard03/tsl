@@ -1,0 +1,21 @@
+<template>
+  <template data-if="slider">
+    <Text data-if="title" size="subheading" :text="title"></Text>
+    <ValueSlider :value="total" :unit="unit" read-only></ValueSlider>
+  </template>
+  <DataRow data-else :label="label" :value="formattedValue"></DataRow>
+</template>
+
+<script>
+  export default {
+    defaults: { items: [], sumField: "balance", label: "", slider: false },
+
+    compute: ({ props, lib }) => {
+      const total = props.items
+        .filter((item) => lib.matchesItem(item, props.where))
+        .reduce((sum, item) => sum + (Number(item[props.sumField]) || 0), 0);
+      const formatted = lib.formatThousands(String(Math.round(total)));
+      return { total, formattedValue: props.unit ? `${formatted} ${props.unit}` : formatted };
+    },
+  };
+</script>

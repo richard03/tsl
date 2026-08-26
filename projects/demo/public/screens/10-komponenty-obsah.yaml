@@ -1,0 +1,115 @@
+id: 10-komponenty-obsah
+title: Ukázka — obsahové komponenty
+structure:
+  header:
+    - ScreenHeader header
+  content:
+    - Text heading
+    - SectionShell section-alerts:
+        - Text label-alerts
+        - GroupShell group-alerts:
+            - AlertMessage alert-info
+            - AlertMessage alert-success
+            - AlertMessage alert-warning
+            - AlertMessage alert-error
+    - Divider
+    - SectionShell section-list-display:
+        - Text label-list-display
+        - GroupShell group-list-display:
+            - ListItemDisplay item-check
+            - ListItemDisplay item-dot
+    - Divider
+    - SectionShell section-list-action:
+        - Text label-list-action
+        - GroupShell group-list-action:
+            - ListItemAction action-plain
+            - ListItemAction action-icon
+            - ListItemAction action-inactive
+    - Divider
+    - SectionShell section-cards:
+        - Text label-cards
+        - GroupShell group-cards:
+            - ContentCard card-plain
+            - ContentCard card-badge
+            - ContentCard card-full
+    - Divider
+    - SectionShell section-result:
+        - Text label-result
+        - ResultPanel result-demo
+  footer:
+    - Button next-btn
+attributes:
+  header:
+  heading:
+    size: heading
+  section-alerts:
+    gap: sm
+  label-alerts:
+    size: subheading
+  group-alerts:
+    gap: sm
+  alert-info:
+    intent: info
+  alert-success:
+    intent: success
+  alert-warning:
+    intent: warning
+  alert-error:
+    intent: error
+  section-list-display:
+    gap: sm
+  label-list-display:
+    size: subheading
+  group-list-display:
+    gap: xs
+  item-check:
+    indicator: check
+  item-dot:
+    indicator: dot
+  section-list-action:
+    gap: sm
+  label-list-action:
+    size: subheading
+  group-list-action:
+    gap: none
+  action-plain:
+    action:
+      goto: 09-komponenty-formulare
+  action-icon:
+    showStartIcon: true
+    swapStartIcon: document
+    description: S ikonou a popiskem
+    action:
+      goto: 09-komponenty-formulare
+  action-inactive:
+  section-cards:
+    gap: sm
+  label-cards:
+    size: subheading
+  group-cards:
+    gap: sm
+  card-plain:
+  card-badge:
+    showTopBadge: true
+    badgeTopIntent: positive
+    showDescription: true
+  card-full:
+    showTopBadge: true
+    badgeTopIntent: danger
+    showDescription: true
+    showIcon: true
+    showContentBadge: true
+    badgeContentIntent: danger
+    showAction: true
+    action:
+      goto: 11-komponenty-navigace
+  section-result:
+    gap: sm
+  label-result:
+    size: subheading
+  result-demo:
+    intent: success
+  next-btn:
+    type: primary
+    action:
+      goto: 11-komponenty-navigace

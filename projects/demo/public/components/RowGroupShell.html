@@ -1,0 +1,40 @@
+<template>
+  <div class="co-row-group-shell co-row-group-shell--gap-{{gap}}"><slot></slot></div>
+</template>
+
+<style>
+  .co-row-group-shell {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: start;
+  }
+
+  .co-row-group-shell--gap-none {
+    gap: 0;
+  }
+
+  .co-row-group-shell--gap-xs {
+    gap: 4px;
+  }
+
+  .co-row-group-shell--gap-sm {
+    gap: 8px;
+  }
+
+  .co-row-group-shell--gap-md {
+    gap: 16px;
+  }
+
+  .co-row-group-shell--gap-lg {
+    gap: 24px;
+  }
+
+  .co-row-group-shell--gap-xl {
+    gap: 32px;
+  }
+</style>
+
+<script>
+  export default { defaults: { gap: "md" } };
+</script>

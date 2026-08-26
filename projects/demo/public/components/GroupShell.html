@@ -1,0 +1,38 @@
+<template>
+  <div class="co-group-shell co-group-shell--gap-{{gap}}"><slot></slot></div>
+</template>
+
+<style>
+  .co-group-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .co-group-shell--gap-none {
+    gap: 0;
+  }
+
+  .co-group-shell--gap-xs {
+    gap: 4px;
+  }
+
+  .co-group-shell--gap-sm {
+    gap: 8px;
+  }
+
+  .co-group-shell--gap-md {
+    gap: 16px;
+  }
+
+  .co-group-shell--gap-lg {
+    gap: 24px;
+  }
+
+  .co-group-shell--gap-xl {
+    gap: 32px;
+  }
+</style>
+
+<script>
+  export default { defaults: { gap: "md" } };
+</script>

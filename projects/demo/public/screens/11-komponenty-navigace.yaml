@@ -1,0 +1,79 @@
+id: 11-komponenty-navigace
+title: Ukázka — layout a navigace
+structure:
+  header:
+    - ScreenHeader header
+  content:
+    - Text heading
+    - SectionShell section-shells:
+        - Text label-shells
+        - Text note-shells
+        - RowGroupShell row-demo:
+            - Tile box1:
+                - Text box1-text
+            - Tile box2:
+                - Text box2-text
+            - Tile box3:
+                - Text box3-text
+    - Divider
+    - SectionShell section-bubbles:
+        - Text label-bubbles
+        - SwipeList swipe-demo:
+            - Bubble bubble1
+            - Bubble bubble2
+            - Bubble bubble3
+            - Bubble bubble4
+    - Divider
+    - SectionShell section-bottomnav:
+        - Text label-bottomnav
+        - Text note-bottomnav
+  footer:
+    - BottomNav bottomnav-demo:
+        - BottomNavItem nav-home
+        - BottomNavItem nav-products
+        - BottomNavItem nav-transactions
+        - BottomNavItem nav-settings
+attributes:
+  header:
+  heading:
+    size: heading
+  section-shells:
+    gap: sm
+  label-shells:
+    size: subheading
+  note-shells:
+    size: muted
+  row-demo:
+    gap: sm
+  box1-text:
+  box2-text:
+  box3-text:
+  section-bubbles:
+    gap: sm
+  label-bubbles:
+    size: subheading
+  swipe-demo:
+    gap: sm
+  bubble1:
+    icon: icon-home.svg
+  bubble2:
+    icon: icon-grid.svg
+  bubble3:
+    icon: icon-list.svg
+  bubble4:
+    icon: icon-settings.svg
+  section-bottomnav:
+    gap: sm
+  label-bottomnav:
+    size: subheading
+  note-bottomnav:
+    size: muted
+  nav-home:
+    icon: icon-home.svg
+  nav-products:
+    icon: icon-grid.svg
+    active: true
+  nav-transactions:
+    icon: icon-list.svg
+  nav-settings:
+    icon: icon-settings.svg

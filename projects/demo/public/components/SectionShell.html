@@ -1,0 +1,30 @@
+<template>
+  <div class="co-section-shell co-section-shell--gap-{{gap}}"><slot></slot></div>
+</template>
+
+<style>
+  .co-section-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .co-section-shell--gap-none {
+    gap: 0;
+  }
+
+  .co-section-shell--gap-sm {
+    gap: 8px;
+  }
+
+  .co-section-shell--gap-md {
+    gap: 24px;
+  }
+
+  .co-section-shell--gap-lg {
+    gap: 32px;
+  }
+</style>
+
+<script>
+  export default { defaults: { gap: "md" } };
+</script>

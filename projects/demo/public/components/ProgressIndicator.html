@@ -1,0 +1,35 @@
+<template>
+  <div
+    class="co-progress-indicator"
+    role="progressbar"
+    aria-valuenow="{{clamped}}"
+    aria-valuemin="0"
+    aria-valuemax="100"
+  >
+    <div class="co-progress-indicator__fill" style="width: {{clamped}}%"></div>
+  </div>
+</template>
+
+<style>
+  .co-progress-indicator {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface-variant);
+    overflow: hidden;
+    margin: 0 16px 12px;
+  }
+
+  .co-progress-indicator__fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+    transition: width 0.2s ease;
+  }
+</style>
+
+<script>
+  export default {
+    defaults: { progress: 0 },
+    compute: ({ props }) => ({ clamped: Math.max(0, Math.min(100, props.progress)) }),
+  };
+</script>

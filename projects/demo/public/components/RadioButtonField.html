@@ -1,0 +1,71 @@
+<template>
+  <label class="co-radio-field">
+    <input
+      type="radio"
+      name="{{variable}}"
+      class="co-radio-field__input"
+      :checked="isChecked"
+      data-on-change="change"
+    />
+    <span class="co-radio-field__label">{{label}}</span>
+  </label>
+</template>
+
+<style>
+  .co-radio-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .co-radio-field__input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: 3px 0 0;
+    border: 2px solid var(--control-border);
+    border-radius: 999px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color 0.1s;
+  }
+
+  .co-radio-field__input:checked {
+    border-color: var(--accent);
+  }
+
+  .co-radio-field__input:checked::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .co-radio-field__label {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+</style>
+
+<script>
+  export default {
+    field: true,
+    defaults: { label: "", variable: "" },
+    // Skupina přepínačů sdílí jednu `variable`; ukládá se popisek vybrané volby.
+    compute: ({ props }) => ({
+      isChecked: props.value !== undefined ? props.value === props.label : Boolean(props.checked),
+    }),
+    on: {
+      change: ({ props, derived }) => {
+        if (!derived.isChecked) props.onChange?.(props.label);
+      },
+    },
+  };
+</script>

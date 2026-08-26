@@ -1,0 +1,67 @@
+<template>
+  <label class="co-checkbox-field">
+    <input
+      type="checkbox"
+      class="co-checkbox-field__input"
+      :checked="isChecked"
+      data-on-change="change"
+    />
+    <span class="co-checkbox-field__label">{{label}}</span>
+  </label>
+</template>
+
+<style>
+  .co-checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .co-checkbox-field__input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: 3px 0 0;
+    border: 2px solid var(--control-border);
+    border-radius: 2px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: background-color 0.1s, border-color 0.1s;
+  }
+
+  .co-checkbox-field__input:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .co-checkbox-field__input:checked::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10' fill='none'%3E%3Cpath d='M1 5L4.5 8.5L11 1' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 11px 9px;
+  }
+
+  .co-checkbox-field__label {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+</style>
+
+<script>
+  export default {
+    field: true,
+    defaults: { label: "" },
+    // `value` je uložená odpověď; `checked` je jen počáteční výchozí hodnota z konfigurace obrazovky.
+    compute: ({ props }) => ({ isChecked: props.value !== undefined ? props.value : Boolean(props.checked) }),
+    on: { change: ({ props }, event) => props.onChange?.(event.target.checked) },
+  };
+</script>

@@ -1,0 +1,60 @@
+<template>
+  <div class="co-alert-message co-alert-message--{{intent}}">
+    <span class="co-alert-message__icon" aria-hidden="true">
+      <img src="{{base}}resources/alert-{{intent}}.svg" alt="" width="16" height="16" />
+    </span>
+    <p class="co-alert-message__text">{{text}}</p>
+  </div>
+</template>
+
+<style>
+  .co-alert-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+
+  .co-alert-message__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .co-alert-message__text {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+    color: inherit;
+  }
+
+  .co-alert-message--info {
+    background: var(--info-soft);
+    color: #001d36;
+  }
+
+  .co-alert-message--success {
+    background: #d5ecd7;
+    color: #0d3311;
+  }
+
+  .co-alert-message--warning {
+    background: #ffecb3;
+    color: #4d3a00;
+  }
+
+  .co-alert-message--error {
+    background: #ffdad6;
+    color: #410002;
+  }
+</style>
+
+<script>
+  export default { defaults: { intent: "info", text: "" } };
+</script>

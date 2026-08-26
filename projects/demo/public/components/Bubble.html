@@ -1,0 +1,75 @@
+<template>
+  <div
+    class="{{className}}"
+    :on-click="onClick"
+    :on-key-down="keyHandler"
+    :role="onClick ? 'button' : undefined"
+    :tab-index="onClick ? 0 : undefined"
+  >
+    <span class="co-bubble__circle">
+      <img src="{{base}}resources/{{icon}}" alt="" width="24" height="24" />
+    </span>
+    <span class="co-bubble__label">{{label}}</span>
+  </div>
+</template>
+
+<style>
+  .co-bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 76px;
+    border: none;
+    background: none;
+    font: inherit;
+    padding: 0;
+  }
+
+  .co-bubble--clickable {
+    cursor: pointer;
+  }
+
+  .co-bubble--clickable:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 999px;
+  }
+
+  .co-bubble__circle {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .co-bubble__label {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--text);
+    text-align: center;
+  }
+</style>
+
+<script>
+  export default {
+    action: true,
+    defaults: { label: "", icon: "icon-wallet.svg" },
+
+    compute: ({ props }) => ({
+      className: "co-bubble" + (props.onClick ? " co-bubble--clickable" : ""),
+      keyHandler: props.onClick
+        ? (e) => {
+            if (e.key === "Enter" || e.key === " ") props.onClick();
+          }
+        : undefined,
+    }),
+  };
+</script>
