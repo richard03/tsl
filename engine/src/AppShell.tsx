@@ -65,13 +65,25 @@ export interface AppShellProps {
 /** Helpers every component gets as `lib`, whatever the project's domain is. */
 const ENGINE_LIB = { matchesItem, getValidationError, onlyDigits, formatThousands, fillTemplate, loadDataFile };
 
+/** The query key actually used for the respondent id, matched case-insensitively — a moderator
+ * typing `?respondentid=` shouldn't silently fall through to a blank setup screen. */
+function findRespondentIdKey(params: URLSearchParams): string | null {
+  for (const key of params.keys()) {
+    if (key.toLowerCase() === "respondentid") return key;
+  }
+  return null;
+}
+
 function getRespondentIdFromUrl(): string | null {
-  return new URLSearchParams(window.location.search).get("respondentId");
+  const params = new URLSearchParams(window.location.search);
+  const key = findRespondentIdKey(params);
+  return key ? params.get(key) : null;
 }
 
 function stripRespondentIdFromUrl(): void {
   const url = new URL(window.location.href);
-  url.searchParams.delete("respondentId");
+  const key = findRespondentIdKey(url.searchParams);
+  if (key) url.searchParams.delete(key);
   window.history.replaceState(null, "", url.toString());
 }
 
